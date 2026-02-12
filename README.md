@@ -1,2 +1,2 @@
 # IDS
-Read this dih
+Maxwell Reese, Mitchel Homelander, Blake Platt
