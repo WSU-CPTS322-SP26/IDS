@@ -1,2 +1,2 @@
 # IDS
-Maxwell Reese, Mitchel Homelander, Blake Platt
+Maxwell Reese, Mitchel Milander, Blake Platt
