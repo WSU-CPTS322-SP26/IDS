@@ -1,2 +1,2 @@
 # IDS
-Maxwell Reese, Mitchel Milander, Blake Platt
+a network Intrusion Detection System (IDS) created by Maxwell Reese, Mitchel Milander, and Blake Platt.
