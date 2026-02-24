@@ -21,10 +21,11 @@ This is intended as a **demo dashboard**, no intrusion detection functionality i
 
 ## How to Run
 
+double click start-demo.bat or use powershell commands
+
 1. Open PowerShell (or terminal) and navigate to the project folder:
 
-run start-demo.bat or use powershell commands
-
+run
 ```powershell
 cd path\to\elastic-demo
 docker compose up -d
