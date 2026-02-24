@@ -13,22 +13,13 @@ This is intended as a **demo dashboard**, no intrusion detection functionality i
 
 ## Prerequisites
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) installed and running
+- [Docker Desktop](https://www.docker.com/products/docker-desktop) installed in C:\Program Files
 - Minimum 8GB RAM recommended
-- PowerShell / Terminal access
 
 ---
 
 ## How to Run
 
-double click start-demo.bat or use powershell commands
-
-1. Open PowerShell (or terminal) and navigate to the project folder:
-
-run
-```powershell
-cd path\to\elastic-demo
-docker compose up -d
-Go-to http://localhost:5601
+double click start-demo.bat
 
 
