@@ -1,3 +1,16 @@
+<<<<<<< main
+- **Wireshark repository** (used for inspiration and referencing):  
+  https://github.com/wireshark/wireshark
+
+- **Helpful starter tutorial – Building a Real-Time IDS**:  
+  https://www.freecodecamp.org/news/build-a-real-time-intrusion-detection-system-with-python/#heading-building-the-core-ids-components
+
+- **Free course – Introduction to Intrusion Detection Systems (IDS)**:  
+  https://www.coursera.org/learn/introduction-to-intrusion-detection-systems-ids#modules
+
+- **Similar project used for reference**:  
+  https://github.com/Abrar2652/Network-Intrusion-Detection
+=======
 WireShark Repo: https://github.com/wireshark/wireshark
 
 'libpcap' tutorials: 
@@ -9,3 +22,4 @@ Building a simple client-server applet in Qt: https://www.youtube.com/watch?v=Ja
 
 Unfortunately there do not seem to be any tutorials showing how to integrate libpcap with Qt.
 So there's a lot of self-learning here by looking at the Wireshark repo source.
+>>>>>>> mitchell
