@@ -23,7 +23,11 @@ This is intended as a **demo dashboard**, no intrusion detection functionality i
 
 1. Open PowerShell (or terminal) and navigate to the project folder:
 
+run start-demo.bat or use powershell commands
+
 ```powershell
 cd path\to\elastic-demo
 docker compose up -d
 Go-to http://localhost:5601
+
+
