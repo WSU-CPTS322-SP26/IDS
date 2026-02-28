@@ -43,8 +43,8 @@ problem lives.
 
 ## Additional Documentation
 TODO: Provide links to additional documentation that may exist in the repo, e.g.,
-* Sprint reports
-* User links
+* [Sprint reports](https://github.com/WSU-CPTS322-SP26/IDS/blob/2af636bd5e15bb4326fc570639b3dcf47da079a1/SPRINT_REPORT_1)
+* [resources] (https://github.com/WSU-CPTS322-SP26/IDS/blob/2af636bd5e15bb4326fc570639b3dcf47da079a1/Resources.md)
 
 ## License
 
