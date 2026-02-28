@@ -31,6 +31,7 @@ class PacketCapture:
 
 class TrafficAnalyzer:
     def __init__(self):
+        self.port_hits = defaultdict(set)
         self.connections = defaultdict(list)
         self.flow_stats = defaultdict(lambda: {
             'packet_count': 0,
@@ -45,6 +46,8 @@ class TrafficAnalyzer:
             ip_dst = packet[IP].dst
             port_src = packet[TCP].sport
             port_dst = packet[TCP].dport
+
+            self.port_hits[ip_src].add(port_dst)
 
             flow_key = (ip_src, ip_dst, port_src, port_dst)
 
@@ -71,7 +74,9 @@ class TrafficAnalyzer:
             'packet_rate': stats['packet_count'] / duration,
             'byte_rate': stats['byte_count'] / duration,
             'tcp_flags': packet[TCP].flags,
-            'window_size': packet[TCP].window
+            'window_size': packet[TCP].window,
+            'packet_count' : stats['packet_count'],
+            'source_ip' : packet[IP].src
         }
     
 
@@ -80,7 +85,8 @@ from sklearn.ensemble import IsolationForest
 import numpy as np
 
 class DetectionEngine:
-    def __init__(self):
+    def __init__(self, traffic_analyzer):
+        self.traffic_analyzer = traffic_analyzer
         self.anomaly_detector = IsolationForest(
             contamination=0.1,
             random_state=42
@@ -93,16 +99,28 @@ class DetectionEngine:
             'syn_flood': {
                 'condition': lambda features: (
                     features['tcp_flags'] == 2 and
-                    features['packet_rate'] > 5000 and
-                    features['flow_duration'] > 0.01
+                    features['packet_rate'] > 5 and
+                    features['packet_size'] < 100 and
+                    features['packet_count'] > 1
+
+
+                    # real data parameters
+                    # features['packet_rate'] > 5000 and
+                    # features['flow_duration'] > 0.01
 
                 )
             },
             'port_scan': {
                 'condition': lambda features: (
-                    features['packet_size'] < 80 and
-                    features['packet_rate'] > 8000 and
-                    features['flow_duration'] > 0.02
+                    len(self.traffic_analyzer.port_hits[features['source_ip']]) >= 3
+                    # features['packet_size'] < 80 and
+                    # features['packet_rate'] > 50 and
+                    # features['packet_size'] < 100 and
+                    # features['packet_count'] > 1
+
+                    #real data parametrs
+                    # features['packet_rate'] > 8000 and
+                    # features['flow_duration'] > 0.02
 
                 )
             }
@@ -182,7 +200,7 @@ class IntrusionDetectionSystem:
     def __init__(self, interface="eth0"):
         self.packet_capture = PacketCapture()
         self.traffic_analyzer = TrafficAnalyzer()
-        self.detection_engine = DetectionEngine()
+        self.detection_engine = DetectionEngine(self.traffic_analyzer)
         self.alert_system = AlertSystem()
 
         self.detection_engine.train_anomaly_detector([[50, 1, 100]])
