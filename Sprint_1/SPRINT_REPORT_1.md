@@ -7,10 +7,7 @@
 * Feature n or Bug Fix n
 
 ## Work Summary (Developer Facing)
-Provide a one paragraph synposis of what your team accomplished this sprint. Don't
-repeat the "What's New" list of features. Instead, help the instructor understand
-how you went about the work described there, any barriers you overcame, and any
-significant learnings for your team.
+For this sprint we wanted to depen our knowledge of how an Intrusion Detection System works as well as put trhat understanding to use by creating a very simplistic IDS along with a very basic dashboard which will act as the foundation of this project. In the next sprint we will build upon these concepts to create a more polished product.
 
 ## Unfinished Work
 If applicable, explain the work you did not finish in this sprint. For issues/user
