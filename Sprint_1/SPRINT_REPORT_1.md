@@ -55,12 +55,12 @@ Examples of explanations (Remove this section when you save the file):
 
 ## Retrospective Summary
 Here's what went well:
-* Got a simple dashboard for the PC working which will act as a baseline for future graphical interface
-* Item 2
+* We worked well together as a team which allowed us to progress
+* Each of us had a task which we focused on which meant that everything could get done in a timely manner
 * Item x
 
 Here's what we'd like to improve:
-* More efficient work, we worked pretty well but more progress could have been.
+* More efficient work, we worked pretty well but more progress could have been made if there was more organization.
 * Item 2
 * Item x
 
