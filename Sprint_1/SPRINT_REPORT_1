@@ -21,9 +21,10 @@ that it can be addressed later.
 
 ## Completed Issues/User Stories
 Here are links to the issues that we completed in this sprint:
-* https://github.com/orgs/WSU-CPTS322-SP26/projects/12?pane=issue&itemId=159490378&issue=WSU-CPTS322-SP26%7CIDS%7C9
-* https://github.com/orgs/WSU-CPTS322-SP26/projects/12/views/1?pane=issue&itemId=159490620&issue=WSU-CPTS322-SP26%7CIDS%7C11
-* Uhttps://github.com/orgs/WSU-CPTS322-SP26/projects/12/views/1?pane=issue&itemId=159490415&issue=WSU-CPTS322-SP26%7CIDS%7C10
+* https://github.com/orgs/WSU-CPTS322-SP26/projects/12/views/1?pane=issue&itemId=159490378&issue=WSU-CPTS322-SP26%7CIDS%7C9
+*https://github.com/orgs/WSU-CPTS322-SP26/projects/12/views/1?pane=issue&itemId=159490620&issue=WSU-CPTS322-SP26%7CIDS%7C11
+*https://github.com/orgs/WSU-CPTS322-SP26/projects/12/views/1?pane=issue&itemId=159489828&issue=WSU-CPTS322-SP26%7CIDS%7C8
+*https://github.com/orgs/WSU-CPTS322-SP26/projects/12/views/1?pane=issue&itemId=159490415&issue=WSU-CPTS322-SP26%7CIDS%7C10
 
 Reminders (Remove this section when you save the file):
 * Each issue should be assigned to a milestone
@@ -46,18 +47,18 @@ Examples of explanations (Remove this section when you save the file):
 * "We did not get to this issue because..." (explain briefly)
 
 ## Code Files for Review Please review the following code files, which were actively developed during this sprint, for quality:
-* [Name of code file 1](https://github.com/your_repo/file_extension)
+* [docker-compose.yml](https://github.com/IDS/ElasticDemo/docker-compose.yml)
 * [Name of code file 2](https://github.com/your_repo/file_extension)
 * [Name of code file 3](https://github.com/your_repo/file_extension)
 
 ## Retrospective Summary
 Here's what went well:
-* Item 1
+* Got a simple dashboard for the PC working which will act as a baseline for future graphical interface
 * Item 2
 * Item x
 
 Here's what we'd like to improve:
-* Item 1
+* More efficient work, we worked pretty well but more progress could have been.
 * Item 2
 * Item x
 
