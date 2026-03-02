@@ -4,9 +4,13 @@
 ## What's New (User Facing)
 * Docker powered dashboard for showing computer specs
 * Client and Server application built in Qt creator 
+* Simple ids that has a test function with 18 packets. A mix of normal, syn flood, and port scan
 
 ## Work Summary (Developer Facing)
 For this sprint we wanted to depen our knowledge of how an Intrusion Detection System works as well as put that understanding to use by creating a very simplistic IDS along with a very basic dashboard which will act as the foundation of this project. In the next sprint we will build upon these concepts to create a more polished product.
+
+## Unfinished Work
+We do not have any unfinshed work for this sprint
 
 ## Completed Issues/User Stories
 Here are links to the issues that we completed in this sprint:
@@ -16,16 +20,7 @@ Here are links to the issues that we completed in this sprint:
 * https://github.com/orgs/WSU-CPTS322-SP26/projects/12/views/1?pane=issue&itemId=159490415&issue=WSU-CPTS322-SP26%7CIDS%7C10
 
 ## Incomplete Issues/User Stories
-Here are links to issues we worked on but did not complete in this sprint:
-* URL of issue 1 <<One sentence explanation of why issue was not completed>>
-* URL of issue 2 <<One sentence explanation of why issue was not completed>>
-* URL of issue n <<One sentence explanation of why issue was not completed>>
-
-Examples of explanations (Remove this section when you save the file):
-* "We ran into a complication we did not anticipate (explain briefly)."
-* "We decided that the feature did not add sufficient value for us to work on it in this sprint (explain briefly)."
-* "We could not reproduce the bug" (explain briefly).
-* "We did not get to this issue because..." (explain briefly)
+Here are links to issues we worked on but did not complete in this sprint: We currently do not have incompleate issues as the only ones we have are for sprint 2 and have not been started yet
 
 ## Code Files for Review Please review the following code files, which were actively developed during this sprint, for quality:
 * [docker-compose.yml](https://github.com/IDS/ElasticDemo/docker-compose.yml)
@@ -34,16 +29,18 @@ Examples of explanations (Remove this section when you save the file):
 
 ## Retrospective Summary
 Here's what went well:
-* We worked well together as a team which allowed us to progress
-* Each of us had a task which we focused on which meant that everything could get done in a timely manner
+* We all worked well and were able to communicate effectively.
+* Once we all got assigned tasks we were able to get them done in a timely mannor as to not hold back the rest of the group.
+* We have all gained experience working effectivly in a team as well as the intricacies of ids systems and related structure to create a app.
 * Meeting with Professor AJ once per week was greatly beneficial in having direction and being able to expand on ideas
 
 Here's what we'd like to improve:
-* More efficient work, we worked pretty well but more progress could have been made if there was more organization.
+* More efficient work, we worked pretty well but more progress could have been made if there was more organization at the start.
+* We struggled initially with direction on where to go as we chose a pretty ambitious project for our knowledge level, but after a few meetings we were able to gain direction and start working better. This can be built on  in the next sprint and we can carry this momentum till the end of the project.
 * Start earlier so we have more time to get more done.
-* Item x
 
 Here are changes we plan to implement in the next sprint:
 * Before beginning Sprint Two, we will read through the rubric so we know well in advance what is required of us.
-* Mitchell needs to get a monitor so he can code at the same time as watching the tutorials
-* Item x
+* continue our work and momentum that we have.
+* add all our current pieces together and get the functioning and work from there
+* Mitchell needs to get a monitor so it is easier for him to code at the same time as watching the tutorials
