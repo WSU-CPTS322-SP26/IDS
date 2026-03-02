@@ -16,7 +16,7 @@ TODO: Write a compelling/creative/informative project description / summary
 
 TODO: List what a user needs to have installed before running the installation
 instructions below (e.g., git, which versions of Ruby/Rails)
-          - Qt Creator (free with .edu account)
+          * Qt Creator (free with .edu account)
 
 ### Add-ons
 
