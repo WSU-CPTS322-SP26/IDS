@@ -8,38 +8,30 @@ This NIDS captures packets, analyzes them, sends data to a dashboard, and alerts
 
 #### Aditional information
 
-TODO: Write a compelling/creative/informative project description / summary
+Similar to other independent IDS systems, the IDS will consist of four main modules: packet capture, traffic analysis, threat detection, and alert generation. Throughout development, the team will ensure their code stays organized and maintainable for future development. The application’s front-end will be implemented using React with system data stored in a SQL-based PostgreSQL database. Python will be extensively used for back-end processes. Key python libraries include Scapy for packet sniffing, pandas for network analysis, and re for hardcoded threat detection. Ideally, the project will also utilize scikit-learn for machine-learning-based anomaly detection. A stretch goal is to implement a SSH Honeypot to attract malicious traffic.
+
 
 ## Installation
 
 ### Prerequisites
 
-TODO: List what a user needs to have installed before running the installation
-instructions below (e.g., git, which versions of Ruby/Rails)
-* Qt Creator (free with .edu account)
+As of right now, nothing
 
 ### Add-ons
 
-TODO: List which add-ons are included in the project, and the purpose each add-on
-serves in your app.
+N/A
 
 ### Installation Steps
 
-TODO: Describe the installation process (making sure you mention `bundle install`).
-Instructions need to be such that a user can just copy/paste the commands to get
-things set up and running.
+N/A
 
 ## Functionality
 
-TODO: Write usage instructions. Structuring it as a walkthrough can help structure
-this section,
-and showcase your features.
+cd into the folder with the ids code and test function. Run python IDS_tutorial_test.py and it will output the information and alerts based on the test packets
 
 ## Known Problems
 
-TODO: Describe any known issues, bugs, odd behaviors or code smells.
-Provide steps to reproduce the problem and/or name a file or a function where the
-problem lives.
+None that we currently know of
 
 ## Additional Documentation
 TODO: Provide links to additional documentation that may exist in the repo, e.g.,
