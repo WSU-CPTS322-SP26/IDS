@@ -4,8 +4,7 @@
 
 ### one sentance discription
 
-TODO: A 20-second elevator pitch of your project - its core idea summarized in one
-sentence
+This NIDS captures packets, analyzes them, sends data to a dashboard, and alerts the user of any malicious traffic.
 
 #### Aditional information
 
@@ -17,6 +16,7 @@ TODO: Write a compelling/creative/informative project description / summary
 
 TODO: List what a user needs to have installed before running the installation
 instructions below (e.g., git, which versions of Ruby/Rails)
+          - Qt Creator (free with .edu account)
 
 ### Add-ons
 
