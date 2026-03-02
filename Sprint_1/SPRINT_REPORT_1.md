@@ -31,7 +31,6 @@ Examples of explanations (Remove this section when you save the file):
 * [docker-compose.yml](https://github.com/IDS/ElasticDemo/docker-compose.yml)
 * [Qt Client Project](https://github.com/WSU-CPTS322-SP26/IDS/tree/main/ClientSample)
 * [Qt Server Project](https://github.com/WSU-CPTS322-SP26/IDS/tree/main/SampleServer)
-* [Name of code file 3](https://github.com/your_repo/file_extension)
 
 ## Retrospective Summary
 Here's what went well:
