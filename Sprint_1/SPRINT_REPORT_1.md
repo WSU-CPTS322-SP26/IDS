@@ -3,11 +3,11 @@
 
 ## What's New (User Facing)
 * Docker powered dashboard for showing computer specs
-* Feature 2 or Bug Fix 2
+* Client and Server application built in Qt creator 
 * Feature n or Bug Fix n
 
 ## Work Summary (Developer Facing)
-For this sprint we wanted to depen our knowledge of how an Intrusion Detection System works as well as put trhat understanding to use by creating a very simplistic IDS along with a very basic dashboard which will act as the foundation of this project. In the next sprint we will build upon these concepts to create a more polished product.
+For this sprint we wanted to depen our knowledge of how an Intrusion Detection System works as well as put that understanding to use by creating a very simplistic IDS along with a very basic dashboard which will act as the foundation of this project. In the next sprint we will build upon these concepts to create a more polished product.
 
 ## Unfinished Work
 If applicable, explain the work you did not finish in this sprint. For issues/user
@@ -47,7 +47,8 @@ Examples of explanations (Remove this section when you save the file):
 
 ## Code Files for Review Please review the following code files, which were actively developed during this sprint, for quality:
 * [docker-compose.yml](https://github.com/IDS/ElasticDemo/docker-compose.yml)
-* [Name of code file 2](https://github.com/your_repo/file_extension)
+* [Qt Client Project](https://github.com/WSU-CPTS322-SP26/IDS/tree/main/ClientSample)
+* [Qt Server Project](https://github.com/WSU-CPTS322-SP26/IDS/tree/main/SampleServer)
 * [Name of code file 3](https://github.com/your_repo/file_extension)
 
 ## Retrospective Summary
@@ -62,6 +63,6 @@ Here's what we'd like to improve:
 * Item x
 
 Here are changes we plan to implement in the next sprint:
-* Item 1
+* Before beginning Sprint Two, we will read through the rubric so we know well in advance what is required of us.
 * Item 2
 * Item x
