@@ -4,19 +4,9 @@
 ## What's New (User Facing)
 * Docker powered dashboard for showing computer specs
 * Client and Server application built in Qt creator 
-* Feature n or Bug Fix n
 
 ## Work Summary (Developer Facing)
 For this sprint we wanted to depen our knowledge of how an Intrusion Detection System works as well as put that understanding to use by creating a very simplistic IDS along with a very basic dashboard which will act as the foundation of this project. In the next sprint we will build upon these concepts to create a more polished product.
-
-## Unfinished Work
-If applicable, explain the work you did not finish in this sprint. For issues/user
-stories in the current sprint that have not been closed, (a) any progress toward
-completion of the issues has been clearly tracked (by checking the checkboxes of
-acceptance criteria), (b) a comment has been added to the issue to explain why the
-issue could not be completed (e.g., "we ran out of time" or "we did not anticipate
-it would be so much work"), and (c) the issue is added to a subsequent sprint, so
-that it can be addressed later.
 
 ## Completed Issues/User Stories
 Here are links to the issues that we completed in this sprint:
@@ -24,14 +14,6 @@ Here are links to the issues that we completed in this sprint:
 * https://github.com/orgs/WSU-CPTS322-SP26/projects/12/views/1?pane=issue&itemId=159490620&issue=WSU-CPTS322-SP26%7CIDS%7C11
 * https://github.com/orgs/WSU-CPTS322-SP26/projects/12/views/1?pane=issue&itemId=159489828&issue=WSU-CPTS322-SP26%7CIDS%7C8
 * https://github.com/orgs/WSU-CPTS322-SP26/projects/12/views/1?pane=issue&itemId=159490415&issue=WSU-CPTS322-SP26%7CIDS%7C10
-
-Reminders (Remove this section when you save the file):
-* Each issue should be assigned to a milestone
-* Each completed issue should be assigned to a pull request
-* Each completed pull request should include a link to a "Before and After" video
-* All team members who contributed to the issue should be assigned to it on GitHub
-* Each issue should be assigned story points using a label
-* Story points contribution of each team member should be indicated in a comment
 
 ## Incomplete Issues/User Stories
 Here are links to issues we worked on but did not complete in this sprint:
