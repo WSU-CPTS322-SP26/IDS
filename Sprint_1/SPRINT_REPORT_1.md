@@ -37,14 +37,14 @@ Examples of explanations (Remove this section when you save the file):
 Here's what went well:
 * We worked well together as a team which allowed us to progress
 * Each of us had a task which we focused on which meant that everything could get done in a timely manner
-* Item x
+* Meeting with Professor AJ once per week was greatly beneficial in having direction and being able to expand on ideas
 
 Here's what we'd like to improve:
 * More efficient work, we worked pretty well but more progress could have been made if there was more organization.
-* Item 2
+* Start earlier so we have more time to get more done.
 * Item x
 
 Here are changes we plan to implement in the next sprint:
 * Before beginning Sprint Two, we will read through the rubric so we know well in advance what is required of us.
-* Item 2
+* Mitchell needs to get a monitor so he can code at the same time as watching the tutorials
 * Item x
