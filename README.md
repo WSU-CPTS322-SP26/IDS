@@ -15,7 +15,7 @@ Similar to other independent IDS systems, the IDS will consist of four main modu
 
 ### Prerequisites
 
-As of right now, nothing
+Docker
 
 ### Add-ons
 
