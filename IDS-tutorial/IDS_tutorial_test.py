@@ -37,7 +37,11 @@ def test_ids():
 
     # train the anomaly detector witha simple baseline
     ids.detection_engine.train_anomaly_detector([[50, 1, 100]])
-    alert_system = AlertSystem(es_url="http://172.19.185.157:9200")
+    import os
+
+    es_url = os.getenv("ES_URL", "http://localhost:9200")
+    alert_system = AlertSystem(es_url=es_url)
+
 
     # Simulate packet processing and threat detection
     print("Starting IDS Test...")

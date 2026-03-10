@@ -213,13 +213,16 @@ class AlertSystem:
             # Implement additional notification methods here
             # (e.g., email, Slack, SIEM integration)
 
+import os
 
 class IntrusionDetectionSystem:
     def __init__(self, interface="eth0"):
         self.packet_capture = PacketCapture()
         self.traffic_analyzer = TrafficAnalyzer()
         self.detection_engine = DetectionEngine(self.traffic_analyzer)
-        self.alert_system = AlertSystem(es_url="http://172.19.185.157:9200")
+        es_url = os.getenv("ES_URL", "http://localhost:9200")
+        self.alert_system = AlertSystem(es_url=es_url)
+
 
         self.detection_engine.train_anomaly_detector([[50, 1, 100]])
 
