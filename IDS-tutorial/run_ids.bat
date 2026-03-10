@@ -20,7 +20,7 @@ echo   Waiting for Elasticsearch to become ready
 echo ============================================
 
 :wait_for_es
-curl.exe http://172.19.185.157:9200 >nul 2>&1
+curl.exe http://localhost:9200 >nul 2>&1
 if %errorlevel% neq 0 (
     echo Elasticsearch not ready yet... retrying in 3 seconds
     timeout /t 3 >nul
