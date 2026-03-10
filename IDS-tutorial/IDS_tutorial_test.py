@@ -1,5 +1,6 @@
 from scapy.all import IP, TCP
 from IDS_tutorial import IntrusionDetectionSystem
+from IDS_tutorial import AlertSystem
 
 
 def test_ids():
@@ -36,7 +37,7 @@ def test_ids():
 
     # train the anomaly detector witha simple baseline
     ids.detection_engine.train_anomaly_detector([[50, 1, 100]])
-
+    alert_system = AlertSystem(es_url="http://172.19.185.157:9200")
 
     # Simulate packet processing and threat detection
     print("Starting IDS Test...")
@@ -52,6 +53,16 @@ def test_ids():
 
             if threats:
                 print(f"Detected threats: {threats}")
+
+                for threat in threats:
+                    packet_info = {
+                        'source_ip': packet[IP].src,
+                        'destination_ip': packet[IP].dst,
+                        'source_port': packet[TCP].sport,
+                        'destination_port': packet[TCP].dport
+                    }
+                    alert_system.generate_alert(threat, packet_info)
+
             else:
                 print("No threats detected.")
         else:
