@@ -163,9 +163,11 @@ class DetectionEngine:
 import logging
 import json
 from datetime import datetime
+import requests
 
 class AlertSystem:
-    def __init__(self, log_file="ids_alerts.log"):
+    def __init__(self, log_file="ids_alerts.log",es_url=None):
+        self.es_url = es_url
         self.logger = logging.getLogger("IDS_Alerts")
         self.logger.setLevel(logging.INFO)
 
@@ -175,6 +177,21 @@ class AlertSystem:
         )
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
+
+    def send_to_elasticsearch(self, alert):
+        print("SENDING TO ELASTICSEARCH")
+        if not self.es_url:
+            return
+        try:
+            print("DEBUG: Attempting POST to", f"{self.es_url}/ids-alerts/_doc")
+            requests.post(
+                f"{self.es_url}/ids-alerts/_doc",
+                json=alert,
+                timeout=2
+            )
+        
+        except Exception as e:
+            print(f"Failed to send alert to Elasticsearch: {e}")
 
     def generate_alert(self, threat, packet_info):
         alert = {
@@ -187,6 +204,7 @@ class AlertSystem:
         }
 
         self.logger.warning(json.dumps(alert))
+        self.send_to_elasticsearch(alert)
 
         if threat['confidence'] > 0.8:
             self.logger.critical(
@@ -201,7 +219,7 @@ class IntrusionDetectionSystem:
         self.packet_capture = PacketCapture()
         self.traffic_analyzer = TrafficAnalyzer()
         self.detection_engine = DetectionEngine(self.traffic_analyzer)
-        self.alert_system = AlertSystem()
+        self.alert_system = AlertSystem(es_url="http://172.19.185.157:9200")
 
         self.detection_engine.train_anomaly_detector([[50, 1, 100]])
 
