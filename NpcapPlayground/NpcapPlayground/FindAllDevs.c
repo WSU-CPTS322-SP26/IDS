@@ -34,7 +34,7 @@ main()
         if (d->description)
         {
                 printf(" (%s)\n", d->description);
-                ifprint(d);
+               // ifprint(d);
         }
         else
             printf(" (No description available)\n");

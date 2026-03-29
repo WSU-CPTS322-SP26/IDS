@@ -10,13 +10,19 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    FindAllDevs.c \
+    choosedevs.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    packetInterpreter.c
 
 HEADERS += \
+    FindAllDevs.h \
+    choosedevs.h \
     mainwindow.h
 
 FORMS += \
+    choosedevs.ui \
     mainwindow.ui
 
 # Default rules for deployment.
@@ -24,8 +30,8 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+#Paths depend on the individual user's directory
+NPCAP_SDK = C:\Users\mitch\Desktop\IDS\IDS\npcap-sdk-1.16
+INCLUDEPATH += $$NPCAP_SDK/Include
+LIBS += -L$$NPCAP_SDK/Lib/x64 -lwpcap -lpacket
 
-#INCLUDEPATH += "C:/Users/mitch/Desktop/IDS/IDS/npcap-sdk-1.16/Include"
-#LIBS += "C:/Users/mitch/Desktop/IDS/IDS/npcap-sdk-1.16/Lib/x64/wpcap.lib"
-#LIBS += "C:/Users/mitch/Desktop/IDS/IDS/npcap-sdk-1.16/Lib/x64/Packet.lib"
-#LIBS += -lws2_32
