@@ -24,5 +24,16 @@
     <ClCompile Include="AdaptorPacketCaptureWithoutCallback.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PacketInterpreter.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pckToFile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="results.pcap">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
