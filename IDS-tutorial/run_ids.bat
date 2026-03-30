@@ -39,7 +39,11 @@ echo.
 echo ============================================
 echo   Opening Kibana in your browser
 echo ============================================
-start http://localhost:5601
+start http://localhost:5601/app/dashboards#/view/3e9fd275-ec0d-4759-9e36-8813c18c8862?_g=(filters:!(),refreshInterval:(pause:!t,value:60000),time:(from:now-15w,to:now))
+
+curl -X POST "http://localhost:5601/api/saved_objects/_import?overwrite=true" ^
+  -H "kbn-xsrf: true" ^
+  --form file=@export(2).ndjson
 
 echo.
 echo ============================================
