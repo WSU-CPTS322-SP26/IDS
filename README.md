@@ -13,7 +13,10 @@ Similar to other independent IDS systems, the IDS will consist of four main modu
 
 ## Installation
 
-### Prerequisites
+Python 3.10+
+Npcap installed
+
+## Prerequisites
 
 Docker
 
@@ -31,12 +34,19 @@ cd into the folder with the ids code and test function. Run python IDS_tutorial_
 
 ## Known Problems
 
-None that we currently know of
+Requires administrative privileges
+High traffic volumes may impact performance
+Detection is currently rule-based (limited ML integration)
+Windows-dependent due to Npcap
 
 ## Additional Documentation
 TODO: Provide links to additional documentation that may exist in the repo, e.g.,
 * [Sprint reports](https://github.com/WSU-CPTS322-SP26/IDS/blob/2af636bd5e15bb4326fc570639b3dcf47da079a1/SPRINT_REPORT_1)
 * [resources] (https://github.com/WSU-CPTS322-SP26/IDS/blob/2af636bd5e15bb4326fc570639b3dcf47da079a1/Resources.md)
+
+## Usage
+
+TODO: How To Run program
 
 ## License
 
