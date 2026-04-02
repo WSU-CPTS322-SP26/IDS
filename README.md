@@ -1,6 +1,6 @@
-# IDS
+# NIDS
 
-## A simple Network Intrusion Detection System (IDS) created by Maxwell Reese, Mitchell Milander, and Blake Platt.
+## A simple Network Intrusion Detection System (NIDS) created by Maxwell Reese, Mitchell Milander, and Blake Platt.
 
 ### one sentance discription
 
