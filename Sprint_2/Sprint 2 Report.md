@@ -58,11 +58,13 @@ Here's what went well:
 * Item 1
 * Item 2
 * Item x
+
 Here's what we'd like to improve:
-* Item 1
-* Item 2
+* Work better as a team instead of as individuals.
+* Meet more often to discuss progress and next steps.
 * Item x
+
 Here are changes we plan to implement in the next sprint:
-* Item 1
+* Create a QT interface for the NIDS.
 * Item 2
 * Item x
