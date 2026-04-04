@@ -25,7 +25,7 @@
       <number>0</number>
      </property>
      <property name="columnCount">
-      <number>2</number>
+      <number>3</number>
      </property>
      <attribute name="horizontalHeaderDefaultSectionSize">
       <number>50</number>
@@ -51,6 +51,11 @@
        <font>
         <pointsize>14</pointsize>
        </font>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>GhostColumn</string>
       </property>
      </column>
     </widget>

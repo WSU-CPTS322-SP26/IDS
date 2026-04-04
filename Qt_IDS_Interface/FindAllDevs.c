@@ -16,7 +16,7 @@ pcap_if_t* FindAllDevs()
         NULL /* auth is not needed */,
         &alldevs, errbuf) == -1)
     {
-        exit(1);
+      return NULL;
     }
     return alldevs;
 }

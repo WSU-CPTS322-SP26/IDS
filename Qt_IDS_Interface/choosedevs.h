@@ -1,6 +1,7 @@
 #ifndef CHOOSEDEVS_H
 #define CHOOSEDEVS_H
 
+#include "qtablewidget.h"
 #include <QDialog>
 
 namespace Ui {
@@ -13,7 +14,11 @@ class ChooseDevs : public QDialog
 
 public:
     explicit ChooseDevs(QWidget *parent = nullptr);
+    void DisplayInterfaces(Ui::ChooseDevs *ui);
     ~ChooseDevs();
+
+private slots:
+    void on_home_itemClicked(QTableWidgetItem *item);
 
 private:
     Ui::ChooseDevs *ui;
