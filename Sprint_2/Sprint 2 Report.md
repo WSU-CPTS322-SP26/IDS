@@ -1,6 +1,7 @@
 # Sprint 2 Report (3/1/26 - 4/4/2026)
 ## What's New (User Facing)
 * Complete Elasticsearch GUI with PC statistics such as #packets in, #packets out, Memory usage, and CPU usage along with a table to display packet information.
+* Complete Npcap integration with Qt for capturing UDP packets over a user-chosen network and displaying them akin to Wireshark.
 * Feature 2 or Bug Fix 2
 * Feature n or Bug Fix n
 
@@ -9,6 +10,8 @@ Provide a one paragraph synposis of what your team accomplished this sprint. Don
 repeat the "What's New" list of features. Instead, help the instructor understand
 how you went about the work described there, any barriers you overcame, and any
 significant learnings for your team.
+
+Response: For Sprint 2, we continued to work on our respective tasks with Mitchell focusing on the Qt UI, Blake hashing out packet analysis in Python, and Max updating the WA reports in addition to completing the Elasticsearch results dashboard. Given its our first time building an IDS, the barrier to entry was steep, but with the online help & teacher guidance, we have been able to meet our Sprint 2 goals. One significant learning is that threading is integral for smooth capturing logic and a responsive UI. 
 
 ## Unfinished Work
 If applicable, explain the work you did not finish in this sprint. For issues/user
@@ -51,12 +54,14 @@ Please review the following code files, which were actively developed during thi
 sprint, for quality:
 * [Name of code file 1](https://github.com/your_repo/file_extension)
 * [Name of code file 2](https://github.com/your_repo/file_extension)
-* [Name of code file 3](https://github.com/your_repo/file_extension)
+* [Qt_IDS_Interface](https://github.com/WSU-CPTS322-SP26/IDS/tree/main/Qt_IDS_Interface)
+* [NpcapPlayground](https://github.com/WSU-CPTS322-SP26/IDS/tree/main/NpcapPlayground)
+* [Qt Npcap Test](https://github.com/WSU-CPTS322-SP26/IDS/tree/main/Qt%20Npcap%20Test)
 
 ## Retrospective Summary
 Here's what went well:
-* Item 1
-* Item 2
+* The team put in solid effort to complete the issues.
+* Each member has a deliverable for Sprint 2 to showcase.
 * Item x
 
 Here's what we'd like to improve:
@@ -65,6 +70,6 @@ Here's what we'd like to improve:
 * Item x
 
 Here are changes we plan to implement in the next sprint:
-* Create a QT interface for the NIDS.
-* Item 2
+* Refactor and update Mitchell's Qt code with added functionality & organization.
+* Connect each member's deliverables to form a cohesive IDS
 * Item x
