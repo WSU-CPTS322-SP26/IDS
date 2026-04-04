@@ -18,7 +18,7 @@
     <item>
      <widget class="QTableWidget" name="home">
       <property name="rowCount">
-       <number>15</number>
+       <number>0</number>
       </property>
       <property name="columnCount">
        <number>7</number>
@@ -26,21 +26,6 @@
       <attribute name="horizontalHeaderHighlightSections">
        <bool>true</bool>
       </attribute>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
-      <row/>
       <column>
        <property name="text">
         <string>No.</string>
@@ -86,7 +71,7 @@
      <x>0</x>
      <y>0</y>
      <width>931</width>
-     <height>25</height>
+     <height>16</height>
     </rect>
    </property>
   </widget>

@@ -11,6 +11,7 @@ CONFIG += c++17
 
 SOURCES += \
     FindAllDevs.c \
+    captureWorker.cpp \
     choosedevs.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -18,8 +19,11 @@ SOURCES += \
 
 HEADERS += \
     FindAllDevs.h \
+    captureWorker.h \
     choosedevs.h \
-    mainwindow.h
+    mainwindow.h \
+    misc.h \
+    packetInterpreter.h
 
 FORMS += \
     choosedevs.ui \
@@ -34,4 +38,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 NPCAP_SDK = C:\Users\mitch\Desktop\IDS\IDS\npcap-sdk-1.16
 INCLUDEPATH += $$NPCAP_SDK/Include
 LIBS += -L$$NPCAP_SDK/Lib/x64 -lwpcap -lpacket
+LIBS+= -lws2_32
 
