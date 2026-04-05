@@ -49,10 +49,6 @@ TODO: Provide links to additional documentation that may exist in the repo, e.g.
 * [Sprint reports](https://github.com/WSU-CPTS322-SP26/IDS/blob/2af636bd5e15bb4326fc570639b3dcf47da079a1/SPRINT_REPORT_1)
 * [resources] (https://github.com/WSU-CPTS322-SP26/IDS/blob/2af636bd5e15bb4326fc570639b3dcf47da079a1/Resources.md)
 
-## Usage
-
-TODO: How To Run program
-
 ## License
 
 Boost Software License - Version 1.0 - August 17th, 2003
