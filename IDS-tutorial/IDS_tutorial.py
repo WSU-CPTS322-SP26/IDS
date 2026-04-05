@@ -9,10 +9,23 @@ class PacketCapture:
         self.stop_capture = threading.Event()
 
     def packet_callback(self, packet):
-        if IP in packet and TCP in packet:
-            self.packet_queue.put(packet)
+        original = packet
 
-    def start_capture(self, interface="eth0"):
+        # Walk down the payload chain until we find IP
+        while packet and not packet.haslayer(IP):
+            packet = packet.payload
+
+        if packet and packet.haslayer(IP) and packet.haslayer(TCP):
+            print("PACKET:", packet.summary())
+            self.packet_queue.put(packet)
+        else:
+            # Debug print so we know what we're seeing
+            print("NON-IP PACKET:", original.summary())
+
+
+
+
+    def start_capture(self, interface):
         def capture_thread():
             sniff(iface=interface,
                   prn=self.packet_callback,
@@ -99,9 +112,16 @@ class DetectionEngine:
             'syn_flood': {
                 'condition': lambda features: (
                     features['tcp_flags'] == 2 and
-                    features['packet_rate'] > 5 and
-                    features['packet_size'] < 100 and
-                    features['packet_count'] > 1
+                    features['packet_rate'] > 50 and
+                    features['flow_duration'] > 0.005 and
+                    features['packet_count'] > 3
+
+
+                    # test func perameters
+                    # features['tcp_flags'] == 2 and
+                    # features['packet_rate'] > 5 and
+                    # features['packet_size'] < 100 and
+                    # features['packet_count'] > 1
 
 
                     # real data parameters
@@ -112,7 +132,13 @@ class DetectionEngine:
             },
             'port_scan': {
                 'condition': lambda features: (
-                    len(self.traffic_analyzer.port_hits[features['source_ip']]) >= 3
+                    len(self.traffic_analyzer.port_hits[features['source_ip']]) >= 5 and
+                    features['packet_rate'] > 100 and
+                    features['flow_duration'] > 0.01
+
+
+                    # test func perameters
+                    # len(self.traffic_analyzer.port_hits[features['source_ip']]) >= 3
                     # features['packet_size'] < 80 and
                     # features['packet_rate'] > 50 and
                     # features['packet_size'] < 100 and
@@ -162,7 +188,7 @@ class DetectionEngine:
 
 import logging
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 import requests
 
 class AlertSystem:
@@ -179,11 +205,9 @@ class AlertSystem:
         self.logger.addHandler(handler)
 
     def send_to_elasticsearch(self, alert):
-        print("SENDING TO ELASTICSEARCH")
         if not self.es_url:
             return
         try:
-            print("DEBUG: Attempting POST to", f"{self.es_url}/ids-alerts/_doc")
             requests.post(
                 f"{self.es_url}/ids-alerts/_doc",
                 json=alert,
@@ -195,7 +219,7 @@ class AlertSystem:
 
     def generate_alert(self, threat, packet_info):
         alert = {
-            'timestamp': datetime.now().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'threat_type': threat['type'],
             'source_ip': packet_info.get('source_ip'),
             'destination_ip': packet_info.get('destination_ip'),
@@ -214,19 +238,61 @@ class AlertSystem:
             # (e.g., email, Slack, SIEM integration)
 
 import os
+import socket
+from scapy.all import get_if_list, get_if_addr
+
 
 class IntrusionDetectionSystem:
-    def __init__(self, interface="eth0"):
+    def __init__(self, interface=None):
+        if interface is None:
+            interface = self.auto_select_interface()
+
         self.packet_capture = PacketCapture()
         self.traffic_analyzer = TrafficAnalyzer()
         self.detection_engine = DetectionEngine(self.traffic_analyzer)
         es_url = os.getenv("ES_URL", "http://localhost:9200")
         self.alert_system = AlertSystem(es_url=es_url)
 
-
         self.detection_engine.train_anomaly_detector([[50, 1, 100]])
-
         self.interface = interface
+
+
+    def auto_select_interface(self):
+        # Step 1: Ask OS which local IP is used for outbound traffic
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            s.connect(("8.8.8.8", 80))
+            local_ip = s.getsockname()[0]
+        finally:
+            s.close()
+
+        # Step 2: Match that IP to a Scapy interface
+        for iface in get_if_list():
+            try:
+                iface_ip = get_if_addr(iface)
+                if iface_ip == local_ip:
+                    return iface
+            except:
+                continue
+
+        # Step 3: Fallback — skip virtual adapters
+        skip_keywords = [
+            "Loopback", "Npcap", "Virtual", "VMware", "vEthernet",
+            "Wi-Fi Direct", "Local Area Connection", "Bluetooth"
+        ]
+
+        for iface in get_if_list():
+            if not any(k in iface for k in skip_keywords):
+                try:
+                    iface_ip = get_if_addr(iface)
+                    if iface_ip and iface_ip != "0.0.0.0" and not iface_ip.startswith("127."):
+                        return iface
+                except:
+                    continue
+
+        raise RuntimeError("No valid network interface found")
+
+
 
     def start(self):
         print(f"Starting IDS on interface {self.interface}")
@@ -238,6 +304,27 @@ class IntrusionDetectionSystem:
                 features = self.traffic_analyzer.analyze_packet(packet)
 
                 if features:
+
+                    packet_doc = {
+                        'timestamp': datetime.now(timezone.utc).isoformat(),
+                        'source_ip': packet[IP].src,
+                        'destination_ip': packet[IP].dst,
+                        'source_port': packet[TCP].sport,
+                        'destination_port': packet[TCP].dport,
+                        'packet_size': len(packet),
+                        'tcp_flags': int(packet[TCP].flags),
+                        'type': 'packet'
+                    }
+
+                    try:
+                        r = requests.post(
+                            f"{self.alert_system.es_url}/ids-packets/_doc",
+                            json=packet_doc,
+                            timeout=2
+                        )
+                    except Exception as e:
+                        print("Packet indexing error:", e)
+
                     threats = self.detection_engine.detect_threats(features)
 
                     for threat in threats:
@@ -257,6 +344,5 @@ class IntrusionDetectionSystem:
                 break
 
 if __name__ == "__main__":
-    ids = IntrusionDetectionSystem(interface="Wi-Fi")
+    ids = IntrusionDetectionSystem()
     ids.start()
-

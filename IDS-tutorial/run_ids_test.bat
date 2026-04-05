@@ -1,5 +1,5 @@
 @echo off
-title IDS + Elasticsearch Launcher
+title IDS + Elasticsearch Launcher (TEST)
 
 echo ============================================
 echo   Starting Docker Desktop (if not running)
@@ -18,7 +18,6 @@ echo.
 echo ============================================
 echo   Waiting for Elasticsearch to become ready
 echo ============================================
-
 :wait_for_es
 curl.exe http://localhost:9200 >nul 2>&1
 if %errorlevel% neq 0 (
@@ -26,24 +25,52 @@ if %errorlevel% neq 0 (
     timeout /t 3 >nul
     goto wait_for_es
 )
-
 echo Elasticsearch is up!
 
 echo.
 echo ============================================
-echo   Running IDS Test Script
+echo   Waiting for Kibana to become ready
+echo ============================================
+:wait_for_kibana
+curl.exe http://localhost:5601 >nul 2>&1
+if %errorlevel% neq 0 (
+    echo Kibana not ready yet... retrying in 3 seconds
+    timeout /t 3 >nul
+    goto wait_for_kibana
+)
+echo Kibana is up!
+
+echo.
+echo ============================================
+echo   Importing Dashboard
+echo ============================================
+curl -X POST "http://localhost:5601/api/saved_objects/_import?overwrite=true" ^
+  -H "kbn-xsrf: true" ^
+  --form file=@dashboard.ndjson
+
+echo.
+echo ============================================
+echo   Running IDS TEST Script
 echo ============================================
 python IDS_tutorial_test.py
 
 echo.
 echo ============================================
-echo   Opening Kibana in your browser
+echo   Waiting for first packet to index
 echo ============================================
-start http://localhost:5601/app/dashboards#/view/3e9fd275-ec0d-4759-9e36-8813c18c8862?_g=(filters:!(),refreshInterval:(pause:!t,value:60000),time:(from:now-15w,to:now))
+:wait_for_packet
+curl.exe http://localhost:9200/ids-packets/_search >nul 2>&1
+if %errorlevel% neq 0 (
+    timeout /t 2 >nul
+    goto wait_for_packet
+)
+echo Packet index exists!
 
-curl -X POST "http://localhost:5601/api/saved_objects/_import?overwrite=true" ^
-  -H "kbn-xsrf: true" ^
-  --form file=@export(2).ndjson
+echo.
+echo ============================================
+echo   Opening Kibana Dashboard
+echo ============================================
+start http://localhost:5601/app/dashboards#/view/3e9fd275-ec0d-4759-9e36-8813c18c8862?_g=(filters:!(),refreshInterval:(pause:!f,value:5000),time:(from:now-15m,to:now))
 
 echo.
 echo ============================================
