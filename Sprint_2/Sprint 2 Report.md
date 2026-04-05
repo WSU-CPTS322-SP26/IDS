@@ -27,9 +27,9 @@ N/A
 ## Code Files for Review
 Please review the following code files, which were actively developed during this
 sprint, for quality:
-* [ids code]([https://github.com/your_repo/file_extension](https://github.com/WSU-CPTS322-SP26/IDS/blob/main/IDS-tutorial/IDS_tutorial.py))
-* [ids test code]([https://github.com/your_repo/file_extension](https://github.com/WSU-CPTS322-SP26/IDS/blob/main/IDS-tutorial/IDS_tutorial_test.py))
-* [screenshot of dash]([https://github.com/your_repo/file_extension](https://github.com/WSU-CPTS322-SP26/IDS/blob/main/IDS-tutorial/Screenshot%202026-04-01%20224326.png))
+* [ids code](https://github.com/WSU-CPTS322-SP26/IDS/blob/main/IDS-tutorial/IDS_tutorial.py)
+* [ids test code](https://github.com/WSU-CPTS322-SP26/IDS/blob/main/IDS-tutorial/IDS_tutorial_test.py)
+* [screenshot of dash](https://github.com/WSU-CPTS322-SP26/IDS/blob/main/IDS-tutorial/Screenshot%202026-04-01%20224326.png)
 * [Qt_IDS_Interface](https://github.com/WSU-CPTS322-SP26/IDS/tree/main/Qt_IDS_Interface)
 * [NpcapPlayground](https://github.com/WSU-CPTS322-SP26/IDS/tree/main/NpcapPlayground)
 * [Qt Npcap Test](https://github.com/WSU-CPTS322-SP26/IDS/tree/main/Qt%20Npcap%20Test)
