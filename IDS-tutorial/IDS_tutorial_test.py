@@ -33,7 +33,7 @@ def test_ids():
         IP(src="192.168.1.200", dst="192.168.1.2") / TCP(sport=4000, dport=25, flags="S"),
     ]
 
-    ids = IntrusionDetectionSystem(interface="Wi-Fi")
+    ids = IntrusionDetectionSystem()
 
     # train the anomaly detector witha simple baseline
     ids.detection_engine.train_anomaly_detector([[50, 1, 100]])
