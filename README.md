@@ -15,6 +15,7 @@ Similar to other independent IDS systems, the IDS will consist of four main modu
 
 Python 3.10+
 Npcap installed
+Npcap sdk
 
 ## Prerequisites
 
@@ -26,11 +27,15 @@ N/A
 
 ### Installation Steps
 
-N/A
+Clone the github
 
 ## Functionality
 
-cd into the folder with the ids code and test function. Run python IDS_tutorial_test.py and it will output the information and alerts based on the test packets
+cd into the folder with the ids code and test function. 
+Run the IDS test bat whcih will show in terminal and open an elstic windown with alerts in the alert section
+Connect to a hotspot so that you can run the ids on your own network, then you can run the ids real bat file which will run the ids on your network and show the packets as well as alerts if there is any
+
+Npcap sniffs packets and relays results to a Qfyt ui
 
 ## Known Problems
 
