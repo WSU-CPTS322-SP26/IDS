@@ -17,6 +17,8 @@ significant learnings for your team.
 Response: For Sprint 2, we continued to work on our respective tasks with Mitchell focusing on the Qt UI, Blake hashing out packet analysis in Python, and Max updating the WA reports in addition to completing the Elasticsearch results dashboard. Blake made a decent amount of progress connecting the ids to the dashboard, aloowing alerts to be shown and normal packet info. Given its our first time building an IDS, the barrier to entry was steep, but with the online help & teacher guidance, we have been able to meet our Sprint 2 goals. One significant learning is that threading is integral for smooth capturing logic and a responsive UI. 
 
 ## Unfinished Work
+N/A
+
 If applicable, explain the work you did not finish in this sprint. For issues/user
 stories in the current sprint that have not been closed, (a) any progress toward
 completion of the issues has been clearly tracked (by checking the checkboxes of
@@ -33,26 +35,8 @@ Here are links to the issues that we completed in this sprint:
 * https://github.com/WSU-CPTS322-SP26/IDS/issues/12
 * URL of issue n
 
-Reminders (Remove this section when you save the file):
-* Each issue should be assigned to a milestone
-* Each completed issue should be assigned to a pull request
-* Each completed pull request should include a link to a "Before and After" video
-* All team members who contributed to the issue should be assigned to it on
-GitHub
-* Each issue should be assigned story points using a label
-* Story points contribution of each team member should be indicated in a comment
-
 ## Incomplete Issues/User Stories
-Here are links to issues we worked on but did not complete in this sprint:
-* URL of issue 1 <<One sentence explanation of why issue was not completed>>
-* URL of issue 2 <<One sentence explanation of why issue was not completed>>
-* URL of issue n <<One sentence explanation of why issue was not completed>>
-Examples of explanations (Remove this section when you save the file):
-* "We ran into a complication we did not anticipate (explain briefly)."
-* "We decided that the feature did not add sufficient value for us to work on it
-in this sprint (explain briefly)."
-* "We could not reproduce the bug" (explain briefly).
-* "We did not get to this issue because..." (explain briefly)
+N/A
 
 ## Code Files for Review
 Please review the following code files, which were actively developed during this
