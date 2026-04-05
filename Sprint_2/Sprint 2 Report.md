@@ -29,6 +29,7 @@ that it can be addressed later.
 Here are links to the issues that we completed in this sprint:
 * https://github.com/orgs/WSU-CPTS322-SP26/projects/12?pane=issue&itemId=161193823&issue=WSU-CPTS322-SP26%7CIDS%7C13
 * https://github.com/orgs/WSU-CPTS322-SP26/projects/12/views/1?pane=issue&itemId=169561797&issue=WSU-CPTS322-SP26%7CIDS%7C32
+* https://github.com/WSU-CPTS322-SP26/IDS/issues/37
 * 
 * URL of issue n
 
