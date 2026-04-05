@@ -9,17 +9,21 @@
 
 ## Work Summary (Developer Facing)
 
-Response: For Sprint 2, we continued to work on our respective tasks with Mitchell focusing on the Qt UI, Blake hashing out packet analysis in Python, and Max updating the WA reports in addition to completing the Elasticsearch results dashboard. Blake made a decent amount of progress connecting the ids to the dashboard, aloowing alerts to be shown and normal packet info. Given its our first time building an IDS, the barrier to entry was steep, but with the online help & teacher guidance, we have been able to meet our Sprint 2 goals. One significant learning is that threading is integral for smooth capturing logic and a responsive UI. 
+For Sprint 2, we continued to work on our respective tasks with Mitchell focusing on the Qt UI, Blake hashing out packet analysis in Python, and Max updating the WA reports in addition to completing the Elasticsearch results dashboard. Blake made a decent amount of progress connecting the ids to the dashboard, aloowing alerts to be shown and normal packet info. Given its our first time building an IDS, the barrier to entry was steep, but with the online help & teacher guidance, we have been able to meet our Sprint 2 goals. One significant learning is that threading is integral for smooth capturing logic and a responsive UI. 
 
 ## Unfinished Work
 N/A
 
 ## Completed Issues/User Stories
 Here are links to the issues that we completed in this sprint:
-* https://github.com/orgs/WSU-CPTS322-SP26/projects/12?pane=issue&itemId=161193823&issue=WSU-CPTS322-SP26%7CIDS%7C13
-* https://github.com/orgs/WSU-CPTS322-SP26/projects/12/views/1?pane=issue&itemId=169561797&issue=WSU-CPTS322-SP26%7CIDS%7C32
 * https://github.com/WSU-CPTS322-SP26/IDS/issues/37
 * https://github.com/WSU-CPTS322-SP26/IDS/issues/12
+* https://github.com/WSU-CPTS322-SP26/IDS/issues/24
+* https://github.com/WSU-CPTS322-SP26/IDS/issues/31
+* https://github.com/WSU-CPTS322-SP26/IDS/issues/36
+* https://github.com/WSU-CPTS322-SP26/IDS/issues/13
+* https://github.com/WSU-CPTS322-SP26/IDS/issues/32
+* https://github.com/WSU-CPTS322-SP26/IDS/issues/34
 
 ## Incomplete Issues/User Stories
 N/A
