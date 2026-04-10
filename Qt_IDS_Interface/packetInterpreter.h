@@ -23,6 +23,7 @@ typedef struct PacketDetails {
 typedef void (*PacketCallback)(const PacketDetails* pktStruct,void *userData); //fp
 
 int interpreter(char* name, PacketCallback cb, void *userData);
+int packetProcess(PacketDetails *info, const struct pcap_pkthdr* header, const u_char* pkt_data);
 
 #ifdef __cplusplus
 }

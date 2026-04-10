@@ -4,7 +4,7 @@
  * requiring a direct call from the programmer each time he wants to retrieve a packet.
  * Tutorial Link: https://npcap.com/guide/npcap-tutorial.html
  *
- * AI was used to help with syntax and threading.
+ * AI was used to help with syntax, filtering, and threading.
  *
  */
 
@@ -43,6 +43,20 @@ typedef struct udp_header {
     u_short crc;   // Checksum
 }udp_header;
 
+/* TCP header*/
+typedef struct tcp_header {
+    u_short sport; // Source port
+    u_short dport; // Destination port
+    u_int seq;
+    u_int ack;
+    u_char dataOff;
+    u_char flags;
+    u_short window;
+    u_short checkSum;
+    u_short urgent;
+}tcp_header;
+
+
 int interpreter(char* name, PacketCallback cb, void *userData)
 {
     pcap_t* adhandle;
@@ -50,7 +64,7 @@ int interpreter(char* name, PacketCallback cb, void *userData)
     const struct pcap_pkthdr* header;
     const u_char* pkt_data;
     int res = 0;
-    char packet_filter[] = "ip and udp";
+    char packet_filter[] = "ip and (udp or tcp)";
     struct bpf_program fcode;
     PacketDetails info;
 
@@ -106,54 +120,12 @@ int interpreter(char* name, PacketCallback cb, void *userData)
           /* Timeout elapsed */
         continue;
 
-      struct tm ltime;
-      char timestr[16];
-      ip_header* ih;
-      udp_header* uh;
-      u_int ip_len;
-      u_short sport, dport;
-      time_t local_tv_sec;
-
-      /* convert the timestamp to readable format */
-      local_tv_sec = header->ts.tv_sec;
-      localtime_s(&ltime, &local_tv_sec);
-      strftime(timestr, sizeof timestr, "%H:%M:%S", &ltime);
-
-      /* print timestamp and length of the packet */
-      snprintf(info.timeStamp, sizeof(info.timeStamp),"%s.%.6d", timestr, header->ts.tv_usec);
-
-      /* retireve the position of the ip header */
-      ih = (ip_header*)(pkt_data +
-          14); //length of ethernet header
-
-      /* retireve the position of the udp header */
-      ip_len = (ih->ver_ihl & 0xf) * 4;
-      uh = (udp_header*)((u_char*)ih + ip_len);
-
-      /* convert from network byte order to host byte order */
-      sport = ntohs(uh->sport);
-      dport = ntohs(uh->dport);
-
-      info.len = header->len;
-      snprintf(info.proto, sizeof(info.proto), "%s", "UDP");
-      info.sourcePort = sport;
-      info.destPort = dport;
-      /* print ip addresses and udp ports */
-      snprintf(info.sourceIP, sizeof(info.sourceIP), "%d.%d.%d.%d",
-          ih->saddr.byte1,
-          ih->saddr.byte2,
-          ih->saddr.byte3,
-          ih->saddr.byte4);
-
-      snprintf(info.destIP, sizeof(info.destIP), "%d.%d.%d.%d",
-          ih->daddr.byte1,
-          ih->daddr.byte2,
-          ih->daddr.byte3,
-          ih->daddr.byte4);
-
-        if(cb){
-          cb(&info, userData);
-        }
+      if(packetProcess(&info, header, pkt_data) == -1){
+        continue;
+      }
+      if(cb){
+        cb(&info, userData);
+      }
     }
 
     pcap_close(adhandle);
@@ -161,4 +133,62 @@ int interpreter(char* name, PacketCallback cb, void *userData)
         return -1;
     }
   return 0;
+}
+
+int packetProcess(PacketDetails *info, const struct pcap_pkthdr* header, const u_char* pkt_data){
+  struct tm ltime;
+  char timestr[16];
+  ip_header* ih;
+  udp_header* uh;
+  tcp_header* th;
+  u_int ip_len;
+  u_short sport, dport;
+  time_t local_tv_sec;
+
+  /* convert the timestamp to readable format */
+  local_tv_sec = header->ts.tv_sec;
+  localtime_s(&ltime, &local_tv_sec);
+  strftime(timestr, sizeof timestr, "%H:%M:%S", &ltime);
+
+  /* print timestamp and length of the packet */
+  snprintf(info->timeStamp, sizeof(info->timeStamp),"%s.%.6d", timestr, header->ts.tv_usec);
+
+  /* retireve the position of the ip header */
+  ih = (ip_header*)(pkt_data +
+      14); //length of ethernet header
+
+  /* retrieve the position of the udp or tcp header */
+  ip_len = (ih->ver_ihl & 0xf) * 4;
+
+  if(ih->proto == 17){
+    uh = (udp_header*)((u_char*)ih + ip_len);
+    /* convert from network byte order to host byte order */
+    sport = ntohs(uh->sport);
+    dport = ntohs(uh->dport);
+    snprintf(info->proto, sizeof(info->proto), "%s", "UDP");
+  } else if(ih->proto == 6){
+    th = (tcp_header*)((u_char*)ih + ip_len);
+    sport = ntohs(th->sport);
+    dport = ntohs(th->dport);
+    snprintf(info->proto, sizeof(info->proto), "%s", "TCP");
+  } else{
+    return -1;
+  }
+
+  info->len = header->len;
+  info->sourcePort = sport;
+  info->destPort = dport;
+  /* print ip addresses and udp ports */
+  snprintf(info->sourceIP, sizeof(info->sourceIP), "%d.%d.%d.%d",
+      ih->saddr.byte1,
+      ih->saddr.byte2,
+      ih->saddr.byte3,
+      ih->saddr.byte4);
+
+  snprintf(info->destIP, sizeof(info->destIP), "%d.%d.%d.%d",
+      ih->daddr.byte1,
+      ih->daddr.byte2,
+      ih->daddr.byte3,
+      ih->daddr.byte4);
+  return 1;
 }
