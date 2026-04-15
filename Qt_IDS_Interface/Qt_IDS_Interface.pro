@@ -35,7 +35,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 #Paths depend on the individual user's directory
-NPCAP_SDK = C:\Users\mitch\Desktop\IDS\IDS\npcap-sdk-1.16
+NPCAP_SDK = "C:\Users\mitch\Desktop\322_Software Engineering\npcap-sdk-1.16"
 INCLUDEPATH += $$NPCAP_SDK/Include
 LIBS += -L$$NPCAP_SDK/Lib/x64 -lwpcap -lpacket
 LIBS+= -lws2_32
