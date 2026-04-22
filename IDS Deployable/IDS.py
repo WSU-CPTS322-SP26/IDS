@@ -192,8 +192,11 @@ from datetime import datetime, timezone
 import requests
 
 class AlertSystem:
-    def __init__(self, log_file="ids_alerts.log",es_url=None):
+    # CHANGED: added es_queue parameter so send_to_elasticsearch() can enqueue
+    #          instead of calling requests.post() directly
+    def __init__(self, log_file="ids_alerts.log", es_url=None, es_queue=None):
         self.es_url = es_url
+        self.es_queue = es_queue  # ADDED: reference to the shared ES post queue
         self.logger = logging.getLogger("IDS_Alerts")
         self.logger.setLevel(logging.INFO)
 
@@ -207,15 +210,10 @@ class AlertSystem:
     def send_to_elasticsearch(self, alert):
         if not self.es_url:
             return
-        try:
-            requests.post(
-                f"{self.es_url}/ids-alerts/_doc",
-                json=alert,
-                timeout=2
-            )
-        
-        except Exception as e:
-            print(f"Failed to send alert to Elasticsearch: {e}")
+        # CHANGED: replaced direct requests.post() with a queue.put() so the
+        # ES worker thread performs the actual POST instead of blocking here.
+        # Tuple format: (index_name, doc_dict)
+        self.es_queue.put(("ids-alerts", alert))
 
     def generate_alert(self, threat, packet_info):
         alert = {
@@ -251,7 +249,15 @@ class IntrusionDetectionSystem:
         self.traffic_analyzer = TrafficAnalyzer()
         self.detection_engine = DetectionEngine(self.traffic_analyzer)
         es_url = os.getenv("ES_URL", "http://localhost:9200")
-        self.alert_system = AlertSystem(es_url=es_url)
+
+        # ADDED: shared queue of (index_name, doc_dict) tuples.
+        # Both the packet post in start() and the alert post in
+        # AlertSystem.send_to_elasticsearch() put items here instead of
+        # calling requests.post() directly. The ES worker thread drains it.
+        self.es_queue = queue.Queue()
+
+        # CHANGED: pass es_queue to AlertSystem so it can enqueue alert POSTs
+        self.alert_system = AlertSystem(es_url=es_url, es_queue=self.es_queue)
 
         self.detection_engine.train_anomaly_detector([[50, 1, 100]])
         self.interface = interface
@@ -292,11 +298,32 @@ class IntrusionDetectionSystem:
 
         raise RuntimeError("No valid network interface found")
 
-
+    # ADDED: worker thread target that drains es_queue and performs each POST.
+    # Running POSTs on a dedicated thread keeps the main packet-processing loop
+    # from stalling whenever Elasticsearch is slow or temporarily unreachable.
+    def _es_worker(self):
+        while True:
+            index_name, doc = self.es_queue.get()  # blocks until an item is available
+            if index_name is None:                  # None is the shutdown sentinel
+                break
+            try:
+                requests.post(
+                    f"{self.alert_system.es_url}/{index_name}/_doc",
+                    json=doc,
+                    timeout=2
+                )
+            except Exception as e:
+                print(f"ES worker POST error [{index_name}]: {e}")
+            finally:
+                self.es_queue.task_done()
 
     def start(self):
         print(f"Starting IDS on interface {self.interface}")
         self.packet_capture.start_capture(self.interface)
+
+        # ADDED: start the ES worker thread so queued POSTs are sent in the background
+        es_thread = threading.Thread(target=self._es_worker, daemon=True)
+        es_thread.start()
 
         while True:
             try:
@@ -316,14 +343,10 @@ class IntrusionDetectionSystem:
                         'type': 'packet'
                     }
 
-                    try:
-                        r = requests.post(
-                            f"{self.alert_system.es_url}/ids-packets/_doc",
-                            json=packet_doc,
-                            timeout=2
-                        )
-                    except Exception as e:
-                        print("Packet indexing error:", e)
+                    # CHANGED: replaced direct requests.post() with a queue.put()
+                    # so the ES worker thread performs the actual POST.
+                    # Tuple format: (index_name, doc_dict)
+                    self.es_queue.put(("ids-packets", packet_doc))
 
                     threats = self.detection_engine.detect_threats(features)
 
@@ -341,6 +364,10 @@ class IntrusionDetectionSystem:
             except KeyboardInterrupt:
                 print("Stopping IDS...")
                 self.packet_capture.stop()
+                # ADDED: send the shutdown sentinel so the ES worker exits
+                # cleanly after finishing any remaining queued POSTs
+                self.es_queue.put((None, None))
+                es_thread.join(timeout=5)
                 break
 
 if __name__ == "__main__":
