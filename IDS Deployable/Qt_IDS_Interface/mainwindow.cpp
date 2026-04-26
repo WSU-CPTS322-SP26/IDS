@@ -5,6 +5,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "captureWorker.h"
+#include "senderWorker.h"
 
 #include <QHeaderView>
 #include <QMessageBox>
@@ -44,6 +45,9 @@ void MainWindow::startInterpreter(QString inter){
     connect(worker, &CaptureWorker::finished, captureThread, &QThread::quit);
     connect(worker, &CaptureWorker::finished, worker, &QObject::deleteLater);
     connect(captureThread, &QThread::finished, captureThread, &QObject::deleteLater);
+
+    SenderWorker* sender = new SenderWorker(this);
+    sender->connectToServer();
 
     captureThread->start();
 }
