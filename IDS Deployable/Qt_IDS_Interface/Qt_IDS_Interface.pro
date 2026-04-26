@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,7 +15,8 @@ SOURCES += \
     choosedevs.cpp \
     main.cpp \
     mainwindow.cpp \
-    packetInterpreter.c
+    packetInterpreter.c \
+    senderWorker.cpp
 
 HEADERS += \
     FindAllDevs.h \
@@ -23,7 +24,8 @@ HEADERS += \
     choosedevs.h \
     mainwindow.h \
     misc.h \
-    packetInterpreter.h
+    packetInterpreter.h \
+    senderWorker.h
 
 FORMS += \
     choosedevs.ui \

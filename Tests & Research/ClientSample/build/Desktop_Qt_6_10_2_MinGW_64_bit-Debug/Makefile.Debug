@@ -251,7 +251,7 @@ debug/moc_DeviceController.cpp: ../../DeviceController.h \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtCore/q20utility.h \
 		debug/moc_predefs.h \
 		C:/Users/mitch/QT/6.10.2/mingw_64/bin/moc.exe
-	C:\Users\mitch\QT\6.10.2\mingw_64\bin\moc.exe $(DEFINES) --include C:/Users/mitch/Desktop/IDS/ClientSample/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/debug/moc_predefs.h -IC:/Users/mitch/QT/6.10.2/mingw_64/mkspecs/win32-g++ -IC:/Users/mitch/Desktop/IDS/ClientSample -IC:/Users/mitch/QT/6.10.2/mingw_64/include -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtGui -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtNetwork -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtCore -I. -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++ -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32 -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/backward -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include-fixed -IC:/Users/mitch/QT/Tools/mingw1310_64/x86_64-w64-mingw32/include ..\..\DeviceController.h -o debug\moc_DeviceController.cpp
+	C:\Users\mitch\QT\6.10.2\mingw_64\bin\moc.exe $(DEFINES) --include "C:/Users/mitch/Desktop/322_Software Engineering/IDS/IDS/Tests & Research/ClientSample/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/debug/moc_predefs.h" -IC:/Users/mitch/QT/6.10.2/mingw_64/mkspecs/win32-g++ -I"C:/Users/mitch/Desktop/322_Software Engineering/IDS/IDS/Tests & Research/ClientSample" -IC:/Users/mitch/QT/6.10.2/mingw_64/include -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtGui -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtNetwork -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtCore -I. -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++ -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32 -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/backward -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include-fixed -IC:/Users/mitch/QT/Tools/mingw1310_64/x86_64-w64-mingw32/include ..\..\DeviceController.h -o debug\moc_DeviceController.cpp
 
 debug/moc_mainwindow.cpp: ../../mainwindow.h \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets/QMainWindow \
@@ -466,7 +466,7 @@ debug/moc_mainwindow.cpp: ../../mainwindow.h \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtNetwork/qtcpsocket.h \
 		debug/moc_predefs.h \
 		C:/Users/mitch/QT/6.10.2/mingw_64/bin/moc.exe
-	C:\Users\mitch\QT\6.10.2\mingw_64\bin\moc.exe $(DEFINES) --include C:/Users/mitch/Desktop/IDS/ClientSample/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/debug/moc_predefs.h -IC:/Users/mitch/QT/6.10.2/mingw_64/mkspecs/win32-g++ -IC:/Users/mitch/Desktop/IDS/ClientSample -IC:/Users/mitch/QT/6.10.2/mingw_64/include -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtGui -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtNetwork -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtCore -I. -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++ -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32 -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/backward -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include-fixed -IC:/Users/mitch/QT/Tools/mingw1310_64/x86_64-w64-mingw32/include ..\..\mainwindow.h -o debug\moc_mainwindow.cpp
+	C:\Users\mitch\QT\6.10.2\mingw_64\bin\moc.exe $(DEFINES) --include "C:/Users/mitch/Desktop/322_Software Engineering/IDS/IDS/Tests & Research/ClientSample/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/debug/moc_predefs.h" -IC:/Users/mitch/QT/6.10.2/mingw_64/mkspecs/win32-g++ -I"C:/Users/mitch/Desktop/322_Software Engineering/IDS/IDS/Tests & Research/ClientSample" -IC:/Users/mitch/QT/6.10.2/mingw_64/include -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtGui -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtNetwork -IC:/Users/mitch/QT/6.10.2/mingw_64/include/QtCore -I. -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++ -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32 -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/backward -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include -IC:/Users/mitch/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include-fixed -IC:/Users/mitch/QT/Tools/mingw1310_64/x86_64-w64-mingw32/include ..\..\mainwindow.h -o debug\moc_mainwindow.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -1068,6 +1068,7 @@ debug/mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets/QGroupBox \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets/qgroupbox.h \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets/qframe.h \
+		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets/QHBoxLayout \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets/QLabel \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets/qlabel.h \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtGui/qpicture.h \
@@ -1100,6 +1101,7 @@ debug/mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets/QPushButton \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets/qpushbutton.h \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets/qabstractbutton.h \
+		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets/QSpacerItem \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets/QSpinBox \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets/qspinbox.h \
 		C:/Users/mitch/QT/6.10.2/mingw_64/include/QtWidgets/QStatusBar \
