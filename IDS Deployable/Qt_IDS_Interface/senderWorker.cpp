@@ -6,6 +6,7 @@ SenderWorker::SenderWorker(QObject *parent)
 
 void SenderWorker::connectToServer(){
     m_socket = new QTcpSocket(this);
+    connect(m_socket, &QTcpSocket::connected, this, &SenderWorker::onConnected);
     connect(m_socket, &QTcpSocket::connected, this, [](){
         qDebug() << "Connected to Python IDS";
     });
@@ -13,9 +14,18 @@ void SenderWorker::connectToServer(){
         qDebug() << "Socket error:" << e;
     });
     m_socket->connectToHost("127.0.0.1", 9999);
+}
 
-    // Hello-world test
-    if (m_socket -> waitForConnected(2000)){
-        m_socket->write("hello from Qt\n");
+void SenderWorker::sendJson(QByteArray jsonBytes){
+    if(m_socket && m_socket->state() == QAbstractSocket::ConnectedState){
+        m_socket->write(jsonBytes);
+    } else{
+        m_pendingQueue.enqueue(jsonBytes);
+    }
+}
+
+void SenderWorker::onConnected(){
+    while (!m_pendingQueue.isEmpty()){
+        m_socket->write(m_pendingQueue.dequeue());
     }
 }

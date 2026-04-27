@@ -38,5 +38,6 @@ class MainWindow : public QMainWindow
     private:
         Ui::MainWindow *ui;
         QThread *captureThread = nullptr;
+        QThread *senderThread = nullptr;
 };
 #endif // MAINWINDOW_H
