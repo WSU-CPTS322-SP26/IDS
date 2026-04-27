@@ -14,8 +14,10 @@ typedef struct PacketDetails {
     int len;
     int sourcePort;
     int destPort;
+    char tcp_flags;
     char  proto[8];
     char timeStamp[16];
+    char isoTimeStamp[32];
     char sourceIP[16];
     char destIP[16];
 } PacketDetails;

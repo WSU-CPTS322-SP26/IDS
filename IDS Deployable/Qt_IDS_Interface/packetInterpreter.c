@@ -64,7 +64,7 @@ int interpreter(char* name, PacketCallback cb, void *userData)
     const struct pcap_pkthdr* header;
     const u_char* pkt_data;
     int res = 0;
-    char packet_filter[] = "ip and (udp or tcp)";
+    char packet_filter[] = "ip and tcp"; // In the future, allow for "ip and (udp or tcp)";
     struct bpf_program fcode;
     PacketDetails info;
 
@@ -137,7 +137,9 @@ int interpreter(char* name, PacketCallback cb, void *userData)
 
 int packetProcess(PacketDetails *info, const struct pcap_pkthdr* header, const u_char* pkt_data){
   struct tm ltime;
+  struct tm gtime;
   char timestr[16];
+  char isoBaseStr[20];
   ip_header* ih;
   udp_header* uh;
   tcp_header* th;
@@ -145,13 +147,18 @@ int packetProcess(PacketDetails *info, const struct pcap_pkthdr* header, const u
   u_short sport, dport;
   time_t local_tv_sec;
 
-  /* convert the timestamp to readable format */
+  /* convert the timestamp to readable format for Qt GUI */
   local_tv_sec = header->ts.tv_sec;
   localtime_s(&ltime, &local_tv_sec);
   strftime(timestr, sizeof timestr, "%H:%M:%S", &ltime);
 
   /* print timestamp and length of the packet */
   snprintf(info->timeStamp, sizeof(info->timeStamp),"%s.%.6d", timestr, header->ts.tv_usec);
+
+  /* for JSON over the socket */
+  gmtime_s(&gtime, &local_tv_sec);
+  strftime(isoBaseStr, sizeof isoBaseStr, "%Y-%m-%dT%H:%M:%S", &gtime);
+  snprintf(info->isoTimeStamp, sizeof(info->isoTimeStamp), "%s.%06dZ", isoBaseStr, header->ts.tv_usec);
 
   /* retireve the position of the ip header */
   ih = (ip_header*)(pkt_data +
@@ -165,11 +172,13 @@ int packetProcess(PacketDetails *info, const struct pcap_pkthdr* header, const u
     /* convert from network byte order to host byte order */
     sport = ntohs(uh->sport);
     dport = ntohs(uh->dport);
+    info->tcp_flags = 0;
     snprintf(info->proto, sizeof(info->proto), "%s", "UDP");
   } else if(ih->proto == 6){
     th = (tcp_header*)((u_char*)ih + ip_len);
     sport = ntohs(th->sport);
     dport = ntohs(th->dport);
+    info->tcp_flags = th->flags;
     snprintf(info->proto, sizeof(info->proto), "%s", "TCP");
   } else{
     return -1;
