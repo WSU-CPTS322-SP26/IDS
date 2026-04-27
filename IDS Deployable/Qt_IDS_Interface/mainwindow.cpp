@@ -31,6 +31,10 @@ MainWindow::~MainWindow()
         captureThread->quit();
         captureThread->wait();
     }
+    if(senderThread){
+        senderThread->quit();
+        senderThread->wait();
+    }
     delete(ui);
 }
 
@@ -46,10 +50,18 @@ void MainWindow::startInterpreter(QString inter){
     connect(worker, &CaptureWorker::finished, worker, &QObject::deleteLater);
     connect(captureThread, &QThread::finished, captureThread, &QObject::deleteLater);
 
-    SenderWorker* sender = new SenderWorker(this);
-    sender->connectToServer();
+    // Create SenderWorker on its own thread
+    senderThread = new QThread(this);
+    SenderWorker* sender = new SenderWorker;
+    sender->moveToThread(senderThread);
+
+    connect(senderThread, &QThread::started, sender, &SenderWorker::connectToServer);
+    connect(worker, &CaptureWorker::packetSerialized, sender, &SenderWorker::sendJson,
+                                                                Qt::QueuedConnection);
+    connect(senderThread, &QThread::finished, sender, &QObject::deleteLater);
 
     captureThread->start();
+    senderThread->start();
 }
 void MainWindow::addPacketRow(QString timeStamp,
                          QString sourceIP,

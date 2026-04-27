@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QQueue>
 
 class SenderWorker : public QObject
 {
@@ -12,10 +13,12 @@ public:
 
 public slots:
     void connectToServer(); // opens the socket
-    // sendJson(QByteArray) slot will come in #57
+    void sendJson(QByteArray jsonBytes);
+    void onConnected();
 
 private:
     QTcpSocket *m_socket = nullptr;
+    QQueue<QByteArray> m_pendingQueue;
 };
 
 #endif // SENDERWORKER_H

@@ -31,7 +31,7 @@ static void packetBridge(const PacketDetails* pktStruct,void* userData){
     QByteArray jsonBytes = QJsonDocument(obj).toJson(QJsonDocument::Compact);
     jsonBytes.append('\n');
 
-    qDebug() << jsonBytes;
+    emit worker->packetSerialized(jsonBytes);
 }
 
 CaptureWorker::CaptureWorker(const QString &deviceName)

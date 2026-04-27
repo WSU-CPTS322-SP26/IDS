@@ -24,7 +24,7 @@ class CaptureWorker : public  QObject{
                          int len,
                          int sourcePort,
                          int destPort);
-
+        void packetSerialized(QByteArray jsonBytes);
         void error(QString message);
         void finished();
 
