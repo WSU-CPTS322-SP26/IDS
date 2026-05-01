@@ -1,8 +1,8 @@
 # Sprint 3 Report (4/4/26 - 5/2/2026)
 
 ## What's New (User Facing)
- * Feature 1 or Bug Fix 1
- * Feature 2 or Bug Fix 2
+ * Elasticsearch post queue and worker thread 
+ * TCP socket listener for incoming JSON packet messages
  * Feature n or Bug Fix n
 
 ## Work Summary (Developer Facing)
@@ -24,14 +24,6 @@ Here are links to the issues that we completed in this sprint:
  * [URL of issue 7](https://github.com/WSU-CPTS322-SP26/IDS/issues/57)
  * [URL of issue 8](https://github.com/WSU-CPTS322-SP26/IDS/issues/58)
  * [URL of issue 9](https://github.com/WSU-CPTS322-SP26/IDS/issues/59)
-
- Reminders (Remove this section when you save the file):
-  * Each issue should be assigned to a milestone
-  * Each completed issue should be assigned to a pull request
-  * Each completed pull request should include a link to a "Before and After" video
-  * All team members who contributed to the issue should be assigned to it on GitHub
-  * Each issue should be assigned story points using a label
-  * Story points contribution of each team member should be indicated in a comment
  
  ## Incomplete Issues/User Stories
  Here are links to issues we worked on but did not complete in this sprint:
@@ -39,12 +31,7 @@ Here are links to the issues that we completed in this sprint:
  * URL of issue 1 <<One sentence explanation of why issue was not completed>>
  * URL of issue 2 <<One sentence explanation of why issue was not completed>>
  * URL of issue n <<One sentence explanation of why issue was not completed>>
- 
- Examples of explanations (Remove this section when you save the file):
-  * "We ran into a complication we did not anticipate (explain briefly)." 
-  * "We decided that the feature did not add sufficient value for us to work on it in this sprint (explain briefly)."
-  * "We could not reproduce the bug" (explain briefly).
-  * "We did not get to this issue because..." (explain briefly)
+
 
 ## Code Files for Review
 Please review the following code files, which were actively developed during this sprint, for quality:
@@ -57,7 +44,7 @@ Please review the following code files, which were actively developed during thi
  
 ## Retrospective Summary
 Here's what went well:
-  * Item 1
+  * We worked very well to complete our sprint 3 goals
   * Item 2
   * Item x
  
@@ -67,6 +54,4 @@ Here's what we'd like to improve:
    * Item x
   
 Here are changes we plan to implement in the next sprint:
-   * Item 1
-   * Item 2
-   * Item x
+   * N/A last sprint
