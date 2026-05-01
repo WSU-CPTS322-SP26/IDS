@@ -34,6 +34,12 @@ class MainWindow : public QMainWindow
                           int sourcePort,
                           int destPort);
         void onCaptureError(QString message);
+        void addAlertRow(QString timestamp,
+                         QString threadType,
+                         QString sourceIP,
+                         QString destinationIP,
+                         double confidence,
+                         QString rule);
 
     private:
         Ui::MainWindow *ui;

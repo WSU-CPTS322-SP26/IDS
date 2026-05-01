@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "ui_choosedevs.h"
 #include "FindAllDevs.h"
+#include "QIcon"
 void DisplayInterfaces(Ui::ChooseDevs *ui);
 
 ChooseDevs::ChooseDevs(QWidget *parent)
@@ -9,11 +10,13 @@ ChooseDevs::ChooseDevs(QWidget *parent)
     ,ui(new Ui::ChooseDevs)
 {
     ui->setupUi(this);
+    setWindowTitle("Interface List");
     ui->home->verticalHeader()->setVisible(false);
     ui->home->setColumnWidth(0,50);
     ui->home->setColumnWidth(1,200);
     ui->home->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
     DisplayInterfaces(ui);
+    setWindowIcon(QIcon(":/icons/cougar.png"));
     ui->home->setColumnHidden(2,true); // Hide this row. It is just used to store backend data.
 }
 
@@ -59,7 +62,7 @@ void ChooseDevs::on_home_itemClicked(QTableWidgetItem *item)
     int row = item->row();
     QTableWidgetItem *column2 = ui->home->item(row,2);
     MainWindow *w = new MainWindow(column2->text());
-    w->show();
+    w->showMaximized();
     this->close();
 }
 

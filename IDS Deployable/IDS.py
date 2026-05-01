@@ -502,7 +502,7 @@ class IntrusionDetectionSystem:
                             'tcp_flags':        int(packet[TCP].flags),
                             'type':             'packet'
                         }
-                        self.es_queue.put(("ids-packets", packet_doc))
+                        #self.es_queue.put(("ids-packets", packet_doc))
 
                         threats = self.detection_engine.detect_threats(features)
                         for threat in threats:
@@ -512,7 +512,7 @@ class IntrusionDetectionSystem:
                                 'source_port':      packet[TCP].sport,
                                 'destination_port': packet[TCP].dport
                             }
-                            self.alert_system.generate_alert(threat, packet_info)
+                            #self.alert_system.generate_alert(threat, packet_info)
 
                 except queue.Empty:
                     pass
