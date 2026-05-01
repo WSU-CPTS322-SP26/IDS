@@ -14,9 +14,16 @@ If applicable, explain the work you did not finish in this sprint. For issues/us
 ## Completed Issues/User Stories
 Here are links to the issues that we completed in this sprint:
 
- * URL of issue 1
- * URL of issue 2
- * URL of issue n
+ * [URL of issue 1](https://github.com/WSU-CPTS322-SP26/IDS/issues/42)
+ * [URL of issue 2](https://github.com/WSU-CPTS322-SP26/IDS/issues/43)
+ * [URL of issue 3](https://github.com/WSU-CPTS322-SP26/IDS/issues/47)
+ * [URL of issue 3](https://github.com/WSU-CPTS322-SP26/IDS/issues/53)
+ * [URL of issue 4](https://github.com/WSU-CPTS322-SP26/IDS/issues/54)
+ * [URL of issue 5](https://github.com/WSU-CPTS322-SP26/IDS/issues/55)
+ * [URL of issue 6](https://github.com/WSU-CPTS322-SP26/IDS/issues/56)
+ * [URL of issue 7](https://github.com/WSU-CPTS322-SP26/IDS/issues/57)
+ * [URL of issue 8](https://github.com/WSU-CPTS322-SP26/IDS/issues/58)
+ * [URL of issue 9](https://github.com/WSU-CPTS322-SP26/IDS/issues/59)
 
  Reminders (Remove this section when you save the file):
   * Each issue should be assigned to a milestone
@@ -41,9 +48,12 @@ Here are links to the issues that we completed in this sprint:
 
 ## Code Files for Review
 Please review the following code files, which were actively developed during this sprint, for quality:
- * [Name of code file 1](https://github.com/your_repo/file_extension)
+ * [Name of code file 1](https://github.com/IDS/IDSDeployable/IDS.py)
  * [Name of code file 2](https://github.com/your_repo/file_extension)
  * [Name of code file 3](https://github.com/your_repo/file_extension)
+ * [Name of code file 4](https://github.com/your_repo/file_extension)
+ * [Name of code file 5](https://github.com/your_repo/file_extension)
+ * [Name of code file 6](https://github.com/your_repo/file_extension)
  
 ## Retrospective Summary
 Here's what went well:
