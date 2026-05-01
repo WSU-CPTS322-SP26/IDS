@@ -87,17 +87,6 @@ class TrafficAnalyzer:
             'source_ip': packet[IP].src
         }
 
-    # -------------------------------------------------------------------------
-    # Issue #54: Extract features from a JSON dict (sent over TCP socket)
-    #
-    # The Qt frontend sends newline-delimited JSON messages with this schema:
-    #   { "timestamp": "...", "source_ip": "...", "destination_ip": "...",
-    #     "protocol": "TCP", "length": 56, "source_port": 443,
-    #     "destination_port": 55630, "tcp_flags": 16 }
-    #
-    # This method mirrors analyze_packet() but operates on those dicts instead
-    # of live Scapy packets, so the rest of the detection pipeline is unchanged.
-    # -------------------------------------------------------------------------
     def analyze_json_dict(self, msg: dict) -> dict | None:
         """
         Accept a parsed JSON packet dict from the TCP socket listener and
@@ -147,15 +136,6 @@ class TrafficAnalyzer:
             'source_ip':     ip_src,
         }
 
-
-# =============================================================================
-# QtBridge — single bidirectional socket on 127.0.0.1:9999
-#
-# Qt sends newline-delimited JSON packet dicts → IDS reads them
-# IDS sends newline-delimited JSON alert dicts → Qt reads them
-#
-# Both directions share the same TCP connection.
-# =============================================================================
 import socket as _socket
 import json as _json
 
@@ -462,9 +442,6 @@ class IntrusionDetectionSystem:
             finally:
                 self.es_queue.task_done()
 
-    # ------------------------------------------------------------------
-    # Issue #54: process one JSON dict through the full detection pipeline
-    # ------------------------------------------------------------------
     def _process_json_msg(self, msg: dict):
         """
         Extract features from a JSON packet dict and run the detection engine,
