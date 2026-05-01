@@ -22,9 +22,6 @@ class PacketCapture:
             # Debug print so we know what we're seeing
             print("NON-IP PACKET:", original.summary())
 
-
-
-
     def start_capture(self, interface):
         def capture_thread():
             sniff(iface=interface,
@@ -38,8 +35,6 @@ class PacketCapture:
     def stop(self):
         self.stop_capture.set()
         self.capture_thread.join()
-
-
 
 
 class TrafficAnalyzer:
@@ -88,10 +83,261 @@ class TrafficAnalyzer:
             'byte_rate': stats['byte_count'] / duration,
             'tcp_flags': packet[TCP].flags,
             'window_size': packet[TCP].window,
-            'packet_count' : stats['packet_count'],
-            'source_ip' : packet[IP].src
+            'packet_count': stats['packet_count'],
+            'source_ip': packet[IP].src
         }
-    
+
+    # -------------------------------------------------------------------------
+    # Issue #54: Extract features from a JSON dict (sent over TCP socket)
+    #
+    # The Qt frontend sends newline-delimited JSON messages with this schema:
+    #   { "timestamp": "...", "source_ip": "...", "destination_ip": "...",
+    #     "protocol": "TCP", "length": 56, "source_port": 443,
+    #     "destination_port": 55630, "tcp_flags": 16 }
+    #
+    # This method mirrors analyze_packet() but operates on those dicts instead
+    # of live Scapy packets, so the rest of the detection pipeline is unchanged.
+    # -------------------------------------------------------------------------
+    def analyze_json_dict(self, msg: dict) -> dict | None:
+        """
+        Accept a parsed JSON packet dict from the TCP socket listener and
+        return a features dict in the same shape as extract_features().
+        Returns None if the dict is missing required fields.
+        """
+        required = ('source_ip', 'destination_ip', 'source_port',
+                    'destination_port', 'length', 'tcp_flags')
+        if not all(k in msg for k in required):
+            print(f"[SocketListener] Dropping malformed message: {msg}")
+            return None
+
+        ip_src   = msg['source_ip']
+        ip_dst   = msg['destination_ip']
+        port_src = int(msg['source_port'])
+        port_dst = int(msg['destination_port'])
+        pkt_size = int(msg['length'])
+        tcp_flags = int(msg['tcp_flags'])
+
+        # Track unique destination ports per source IP (same as analyze_packet)
+        self.port_hits[ip_src].add(port_dst)
+
+        flow_key = (ip_src, ip_dst, port_src, port_dst)
+        stats = self.flow_stats[flow_key]
+        stats['packet_count'] += 1
+        stats['byte_count']   += pkt_size
+
+        # Use wall-clock time when no packet timestamp is available
+        import time
+        current_time = time.time()
+        if not stats['start_time']:
+            stats['start_time'] = current_time
+        stats['last_time'] = current_time
+
+        duration = stats['last_time'] - stats['start_time']
+        if duration == 0:
+            duration = 1e-6
+
+        return {
+            'packet_size':   pkt_size,
+            'flow_duration': duration,
+            'packet_rate':   stats['packet_count'] / duration,
+            'byte_rate':     stats['byte_count']   / duration,
+            'tcp_flags':     tcp_flags,
+            'window_size':   msg.get('window_size', 0),
+            'packet_count':  stats['packet_count'],
+            'source_ip':     ip_src,
+        }
+
+
+# =============================================================================
+# Issue #53: TCP socket listener
+#
+# Binds to 127.0.0.1:9999, accepts one client at a time, and reads
+# newline-delimited JSON messages. Each parsed dict is handed to the
+# TrafficAnalyzer and then the DetectionEngine exactly like a live packet.
+#
+# The listener runs on its own daemon thread so it doesn't block the main
+# packet-capture loop.  Call stop() to shut it down cleanly.
+# =============================================================================
+import socket as _socket
+import json as _json
+
+class SocketListener:
+    """
+    Listens on 127.0.0.1:9999 for newline-delimited JSON packet dicts sent
+    by the Qt frontend.  Parsed dicts are placed on json_queue for the main
+    IDS loop to consume.
+    """
+
+    HOST = "127.0.0.1"
+    PORT = 9999
+
+    def __init__(self, json_queue: queue.Queue):
+        self.json_queue  = json_queue
+        self._stop_event = threading.Event()
+        self._thread     = None
+
+    def start(self):
+        self._thread = threading.Thread(target=self._listen_loop, daemon=True,
+                                        name="SocketListener")
+        self._thread.start()
+        print(f"[SocketListener] Listening on {self.HOST}:{self.PORT}")
+
+    def stop(self):
+        self._stop_event.set()
+        # Unblock accept() by connecting briefly to ourselves
+        try:
+            with _socket.create_connection((self.HOST, self.PORT), timeout=1):
+                pass
+        except Exception:
+            pass
+        if self._thread:
+            self._thread.join(timeout=3)
+
+    # ------------------------------------------------------------------
+    def _listen_loop(self):
+        srv = _socket.socket(_socket.AF_INET, _socket.SOCK_STREAM)
+        srv.setsockopt(_socket.SOL_SOCKET, _socket.SO_REUSEADDR, 1)
+        srv.bind((self.HOST, self.PORT))
+        srv.listen(1)
+        srv.settimeout(1.0)          # so we can check _stop_event each second
+
+        while not self._stop_event.is_set():
+            try:
+                conn, addr = srv.accept()
+            except _socket.timeout:
+                continue
+            except OSError:
+                break
+
+            print(f"[SocketListener] Qt client connected from {addr}")
+            try:
+                self._handle_client(conn)
+            finally:
+                conn.close()
+                print(f"[SocketListener] Qt client disconnected")
+
+        srv.close()
+
+    def _handle_client(self, conn: _socket.socket):
+        """Read newline-delimited JSON from one connected client."""
+        buf = ""
+        conn.settimeout(1.0)
+
+        while not self._stop_event.is_set():
+            try:
+                chunk = conn.recv(4096).decode("utf-8", errors="replace")
+            except _socket.timeout:
+                continue
+            except (ConnectionResetError, OSError):
+                break
+
+            if not chunk:          # client closed connection
+                break
+
+            buf += chunk
+            # Process every complete newline-terminated message
+            while "\n" in buf:
+                line, buf = buf.split("\n", 1)
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    msg = _json.loads(line)
+                    self.json_queue.put(msg)
+                except _json.JSONDecodeError as e:
+                    print(f"[SocketListener] JSON parse error: {e} | raw: {line!r}")
+
+
+# =============================================================================
+# Alert pusher — listens on 127.0.0.1:9998 and pushes alert JSON to Qt
+#
+# IDS.py acts as the SERVER. Qt connects as the client when it's ready.
+# When a threat is detected, the alert JSON is put on alert_queue and the
+# pusher thread sends it to every connected Qt client.
+# =============================================================================
+
+class AlertPusher:
+    """
+    Listens on 127.0.0.1:9998. When Qt connects, any alert put on
+    alert_queue is immediately forwarded as newline-delimited JSON.
+    Multiple Qt clients are supported (e.g. reconnects).
+    """
+
+    HOST = "127.0.0.1"
+    PORT = 9998
+
+    def __init__(self):
+        self.alert_queue  = queue.Queue()
+        self._stop_event  = threading.Event()
+        self._clients     = []          # list of connected QTcpSocket connections
+        self._clients_lock = threading.Lock()
+        self._thread      = None
+
+    def start(self):
+        self._thread = threading.Thread(target=self._listen_loop, daemon=True,
+                                        name="AlertPusher")
+        self._thread.start()
+        # Drain queue → connected clients on a separate thread
+        threading.Thread(target=self._send_loop, daemon=True,
+                         name="AlertSender").start()
+        print(f"[AlertPusher] Listening on {self.HOST}:{self.PORT}")
+
+    def stop(self):
+        self._stop_event.set()
+        self.alert_queue.put(None)      # unblock _send_loop
+        try:
+            with _socket.create_connection((self.HOST, self.PORT), timeout=1):
+                pass
+        except Exception:
+            pass
+        if self._thread:
+            self._thread.join(timeout=3)
+
+    def push(self, alert: dict):
+        """Called by AlertSystem.generate_alert() to enqueue an alert."""
+        self.alert_queue.put(alert)
+
+    # ------------------------------------------------------------------
+    def _listen_loop(self):
+        srv = _socket.socket(_socket.AF_INET, _socket.SOCK_STREAM)
+        srv.setsockopt(_socket.SOL_SOCKET, _socket.SO_REUSEADDR, 1)
+        srv.bind((self.HOST, self.PORT))
+        srv.listen(5)
+        srv.settimeout(1.0)
+
+        while not self._stop_event.is_set():
+            try:
+                conn, addr = srv.accept()
+            except _socket.timeout:
+                continue
+            except OSError:
+                break
+
+            print(f"[AlertPusher] Qt alert client connected from {addr}")
+            conn.settimeout(None)
+            with self._clients_lock:
+                self._clients.append(conn)
+
+        srv.close()
+
+    def _send_loop(self):
+        """Drain alert_queue and write each alert to all connected clients."""
+        while True:
+            alert = self.alert_queue.get()
+            if alert is None:           # shutdown sentinel
+                break
+
+            line = (_json.dumps(alert) + "\n").encode("utf-8")
+            with self._clients_lock:
+                dead = []
+                for conn in self._clients:
+                    try:
+                        conn.sendall(line)
+                    except OSError:
+                        dead.append(conn)
+                for conn in dead:
+                    self._clients.remove(conn)
+                    print("[AlertPusher] Qt alert client disconnected")
 
 
 from sklearn.ensemble import IsolationForest
@@ -115,19 +361,6 @@ class DetectionEngine:
                     features['packet_rate'] > 50 and
                     features['flow_duration'] > 0.005 and
                     features['packet_count'] > 3
-
-
-                    # test func perameters
-                    # features['tcp_flags'] == 2 and
-                    # features['packet_rate'] > 5 and
-                    # features['packet_size'] < 100 and
-                    # features['packet_count'] > 1
-
-
-                    # real data parameters
-                    # features['packet_rate'] > 5000 and
-                    # features['flow_duration'] > 0.01
-
                 )
             },
             'port_scan': {
@@ -135,19 +368,6 @@ class DetectionEngine:
                     len(self.traffic_analyzer.port_hits[features['source_ip']]) >= 5 and
                     features['packet_rate'] > 100 and
                     features['flow_duration'] > 0.01
-
-
-                    # test func perameters
-                    # len(self.traffic_analyzer.port_hits[features['source_ip']]) >= 3
-                    # features['packet_size'] < 80 and
-                    # features['packet_rate'] > 50 and
-                    # features['packet_size'] < 100 and
-                    # features['packet_count'] > 1
-
-                    #real data parametrs
-                    # features['packet_rate'] > 8000 and
-                    # features['flow_duration'] > 0.02
-
                 )
             }
         }
@@ -175,7 +395,7 @@ class DetectionEngine:
         ]])
 
         anomaly_score = self.anomaly_detector.score_samples(feature_vector)[0]
-        if anomaly_score < -0.5:  # Threshold for anomaly detection
+        if anomaly_score < -0.5:
             threats.append({
                 'type': 'anomaly',
                 'score': anomaly_score,
@@ -183,7 +403,6 @@ class DetectionEngine:
             })
 
         return threats
-    
 
 
 import logging
@@ -192,48 +411,45 @@ from datetime import datetime, timezone
 import requests
 
 class AlertSystem:
-    # CHANGED: added es_queue parameter so send_to_elasticsearch() can enqueue
-    #          instead of calling requests.post() directly
-    def __init__(self, log_file="ids_alerts.log", es_url=None, es_queue=None):
-        self.es_url = es_url
-        self.es_queue = es_queue  # ADDED: reference to the shared ES post queue
-        self.logger = logging.getLogger("IDS_Alerts")
+    def __init__(self, log_file="ids_alerts.log", es_url=None, es_queue=None, alert_pusher=None):
+        self.es_url       = es_url
+        self.es_queue     = es_queue
+        self.alert_pusher = alert_pusher   # AlertPusher instance (may be None)
+        self.logger       = logging.getLogger("IDS_Alerts")
         self.logger.setLevel(logging.INFO)
 
-        handler = logging.FileHandler(log_file)
-        formatter = logging.Formatter(
-            '%(asctime)s - %(levelname)s - %(message)s'
-        )
+        handler   = logging.FileHandler(log_file)
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
 
     def send_to_elasticsearch(self, alert):
         if not self.es_url:
             return
-        # CHANGED: replaced direct requests.post() with a queue.put() so the
-        # ES worker thread performs the actual POST instead of blocking here.
-        # Tuple format: (index_name, doc_dict)
         self.es_queue.put(("ids-alerts", alert))
 
     def generate_alert(self, threat, packet_info):
         alert = {
-            'timestamp': datetime.now(timezone.utc).isoformat(),
-            'threat_type': threat['type'],
-            'source_ip': packet_info.get('source_ip'),
-            'destination_ip': packet_info.get('destination_ip'),
-            'confidence': threat.get('confidence', 0.0),
-            'details': threat
+            'timestamp':       datetime.now(timezone.utc).isoformat(),
+            'threat_type':     threat['type'],
+            'source_ip':       packet_info.get('source_ip'),
+            'destination_ip':  packet_info.get('destination_ip'),
+            'confidence':      threat.get('confidence', 0.0),
+            'details':         threat
         }
 
         self.logger.warning(json.dumps(alert))
         self.send_to_elasticsearch(alert)
 
+        # Push to Qt alert window if connected
+        if self.alert_pusher:
+            self.alert_pusher.push(alert)
+
         if threat['confidence'] > 0.8:
             self.logger.critical(
                 f"High confidence threat detected: {json.dumps(alert)}"
             )
-            # Implement additional notification methods here
-            # (e.g., email, Slack, SIEM integration)
+
 
 import os
 import socket
@@ -245,26 +461,24 @@ class IntrusionDetectionSystem:
         if interface is None:
             interface = self.auto_select_interface()
 
-        self.packet_capture = PacketCapture()
+        self.packet_capture  = PacketCapture()
         self.traffic_analyzer = TrafficAnalyzer()
         self.detection_engine = DetectionEngine(self.traffic_analyzer)
+
         es_url = os.getenv("ES_URL", "http://localhost:9200")
-
-        # ADDED: shared queue of (index_name, doc_dict) tuples.
-        # Both the packet post in start() and the alert post in
-        # AlertSystem.send_to_elasticsearch() put items here instead of
-        # calling requests.post() directly. The ES worker thread drains it.
-        self.es_queue = queue.Queue()
-
-        # CHANGED: pass es_queue to AlertSystem so it can enqueue alert POSTs
-        self.alert_system = AlertSystem(es_url=es_url, es_queue=self.es_queue)
+        self.es_queue     = queue.Queue()
+        self.alert_pusher = AlertPusher()
+        self.alert_system = AlertSystem(es_url=es_url, es_queue=self.es_queue,
+                                        alert_pusher=self.alert_pusher)
 
         self.detection_engine.train_anomaly_detector([[50, 1, 100]])
         self.interface = interface
 
+        # Issue #53: queue that SocketListener puts JSON dicts onto
+        self.json_queue     = queue.Queue()
+        self.socket_listener = SocketListener(self.json_queue)
 
     def auto_select_interface(self):
-        # Step 1: Ask OS which local IP is used for outbound traffic
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
             s.connect(("8.8.8.8", 80))
@@ -272,7 +486,6 @@ class IntrusionDetectionSystem:
         finally:
             s.close()
 
-        # Step 2: Match that IP to a Scapy interface
         for iface in get_if_list():
             try:
                 iface_ip = get_if_addr(iface)
@@ -281,12 +494,10 @@ class IntrusionDetectionSystem:
             except:
                 continue
 
-        # Step 3: Fallback — skip virtual adapters
         skip_keywords = [
             "Loopback", "Npcap", "Virtual", "VMware", "vEthernet",
             "Wi-Fi Direct", "Local Area Connection", "Bluetooth"
         ]
-
         for iface in get_if_list():
             if not any(k in iface for k in skip_keywords):
                 try:
@@ -298,13 +509,10 @@ class IntrusionDetectionSystem:
 
         raise RuntimeError("No valid network interface found")
 
-    # ADDED: worker thread target that drains es_queue and performs each POST.
-    # Running POSTs on a dedicated thread keeps the main packet-processing loop
-    # from stalling whenever Elasticsearch is slow or temporarily unreachable.
     def _es_worker(self):
         while True:
-            index_name, doc = self.es_queue.get()  # blocks until an item is available
-            if index_name is None:                  # None is the shutdown sentinel
+            index_name, doc = self.es_queue.get()
+            if index_name is None:
                 break
             try:
                 requests.post(
@@ -317,58 +525,104 @@ class IntrusionDetectionSystem:
             finally:
                 self.es_queue.task_done()
 
+    # ------------------------------------------------------------------
+    # Issue #54: process one JSON dict through the full detection pipeline
+    # ------------------------------------------------------------------
+    def _process_json_msg(self, msg: dict):
+        """
+        Extract features from a JSON packet dict and run the detection engine,
+        mirroring what start() does for live Scapy packets.
+        """
+        features = self.traffic_analyzer.analyze_json_dict(msg)
+        if not features:
+            return
+
+        # Push to Elasticsearch just like a live packet
+        packet_doc = {
+            'timestamp':        datetime.now(timezone.utc).isoformat(),
+            'source_ip':        msg.get('source_ip'),
+            'destination_ip':   msg.get('destination_ip'),
+            'source_port':      msg.get('source_port'),
+            'destination_port': msg.get('destination_port'),
+            'packet_size':      msg.get('length'),
+            'tcp_flags':        msg.get('tcp_flags'),
+            'type':             'packet_json',
+        }
+        self.es_queue.put(("ids-packets", packet_doc))
+
+        threats = self.detection_engine.detect_threats(features)
+        for threat in threats:
+            packet_info = {
+                'source_ip':        msg.get('source_ip'),
+                'destination_ip':   msg.get('destination_ip'),
+                'source_port':      msg.get('source_port'),
+                'destination_port': msg.get('destination_port'),
+            }
+            self.alert_system.generate_alert(threat, packet_info)
+
     def start(self):
         print(f"Starting IDS on interface {self.interface}")
         self.packet_capture.start_capture(self.interface)
 
-        # ADDED: start the ES worker thread so queued POSTs are sent in the background
+        # Start the ES worker thread
         es_thread = threading.Thread(target=self._es_worker, daemon=True)
         es_thread.start()
 
+        # Issue #53: start the TCP socket listener for Qt frontend
+        self.socket_listener.start()
+
+        # Start alert pusher so Qt can receive threat alerts on port 9998
+        self.alert_pusher.start()
+
         while True:
             try:
-                packet = self.packet_capture.packet_queue.get(timeout=1)
-                features = self.traffic_analyzer.analyze_packet(packet)
+                # --- Live Scapy packets ---
+                try:
+                    packet = self.packet_capture.packet_queue.get(timeout=0.1)
+                    features = self.traffic_analyzer.analyze_packet(packet)
 
-                if features:
-
-                    packet_doc = {
-                        'timestamp': datetime.now(timezone.utc).isoformat(),
-                        'source_ip': packet[IP].src,
-                        'destination_ip': packet[IP].dst,
-                        'source_port': packet[TCP].sport,
-                        'destination_port': packet[TCP].dport,
-                        'packet_size': len(packet),
-                        'tcp_flags': int(packet[TCP].flags),
-                        'type': 'packet'
-                    }
-
-                    # CHANGED: replaced direct requests.post() with a queue.put()
-                    # so the ES worker thread performs the actual POST.
-                    # Tuple format: (index_name, doc_dict)
-                    self.es_queue.put(("ids-packets", packet_doc))
-
-                    threats = self.detection_engine.detect_threats(features)
-
-                    for threat in threats:
-                        packet_info = {
-                            'source_ip': packet[IP].src,
-                            'destination_ip': packet[IP].dst,
-                            'source_port': packet[TCP].sport,
-                            'destination_port': packet[TCP].dport
+                    if features:
+                        packet_doc = {
+                            'timestamp':        datetime.now(timezone.utc).isoformat(),
+                            'source_ip':        packet[IP].src,
+                            'destination_ip':   packet[IP].dst,
+                            'source_port':      packet[TCP].sport,
+                            'destination_port': packet[TCP].dport,
+                            'packet_size':      len(packet),
+                            'tcp_flags':        int(packet[TCP].flags),
+                            'type':             'packet'
                         }
-                        self.alert_system.generate_alert(threat, packet_info)
+                        self.es_queue.put(("ids-packets", packet_doc))
 
-            except queue.Empty:
-                continue
+                        threats = self.detection_engine.detect_threats(features)
+                        for threat in threats:
+                            packet_info = {
+                                'source_ip':        packet[IP].src,
+                                'destination_ip':   packet[IP].dst,
+                                'source_port':      packet[TCP].sport,
+                                'destination_port': packet[TCP].dport
+                            }
+                            self.alert_system.generate_alert(threat, packet_info)
+
+                except queue.Empty:
+                    pass
+
+                # --- Issue #53/#54: JSON dicts from Qt socket ---
+                try:
+                    msg = self.json_queue.get(timeout=0.1)
+                    self._process_json_msg(msg)
+                except queue.Empty:
+                    pass
+
             except KeyboardInterrupt:
                 print("Stopping IDS...")
                 self.packet_capture.stop()
-                # ADDED: send the shutdown sentinel so the ES worker exits
-                # cleanly after finishing any remaining queued POSTs
+                self.socket_listener.stop()
+                self.alert_pusher.stop()
                 self.es_queue.put((None, None))
                 es_thread.join(timeout=5)
                 break
+
 
 if __name__ == "__main__":
     ids = IntrusionDetectionSystem()
