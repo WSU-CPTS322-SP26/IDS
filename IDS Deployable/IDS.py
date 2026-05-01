@@ -149,42 +149,44 @@ class TrafficAnalyzer:
 
 
 # =============================================================================
-# Issue #53: TCP socket listener
+# QtBridge — single bidirectional socket on 127.0.0.1:9999
 #
-# Binds to 127.0.0.1:9999, accepts one client at a time, and reads
-# newline-delimited JSON messages. Each parsed dict is handed to the
-# TrafficAnalyzer and then the DetectionEngine exactly like a live packet.
+# Qt sends newline-delimited JSON packet dicts → IDS reads them
+# IDS sends newline-delimited JSON alert dicts → Qt reads them
 #
-# The listener runs on its own daemon thread so it doesn't block the main
-# packet-capture loop.  Call stop() to shut it down cleanly.
+# Both directions share the same TCP connection.
 # =============================================================================
 import socket as _socket
 import json as _json
 
-class SocketListener:
+class QtBridge:
     """
-    Listens on 127.0.0.1:9999 for newline-delimited JSON packet dicts sent
-    by the Qt frontend.  Parsed dicts are placed on json_queue for the main
-    IDS loop to consume.
+    Listens on 127.0.0.1:9999. Qt connects once and the connection is
+    bidirectional:
+      - Incoming data (Qt → IDS): parsed as JSON, placed on json_queue
+      - Outgoing data (IDS → Qt): call push(alert) to send an alert back
     """
 
     HOST = "127.0.0.1"
     PORT = 9999
 
     def __init__(self, json_queue: queue.Queue):
-        self.json_queue  = json_queue
-        self._stop_event = threading.Event()
-        self._thread     = None
+        self.json_queue    = json_queue
+        self.alert_queue   = queue.Queue()
+        self._stop_event   = threading.Event()
+        self._conn         = None          # active client socket
+        self._conn_lock    = threading.Lock()
+        self._thread       = None
 
     def start(self):
         self._thread = threading.Thread(target=self._listen_loop, daemon=True,
-                                        name="SocketListener")
+                                        name="QtBridge")
         self._thread.start()
-        print(f"[SocketListener] Listening on {self.HOST}:{self.PORT}")
+        print(f"[QtBridge] Listening on {self.HOST}:{self.PORT}")
 
     def stop(self):
         self._stop_event.set()
-        # Unblock accept() by connecting briefly to ourselves
+        self.alert_queue.put(None)         # unblock sender thread
         try:
             with _socket.create_connection((self.HOST, self.PORT), timeout=1):
                 pass
@@ -193,13 +195,17 @@ class SocketListener:
         if self._thread:
             self._thread.join(timeout=3)
 
+    def push(self, alert: dict):
+        """Called by AlertSystem.generate_alert() to send an alert to Qt."""
+        self.alert_queue.put(alert)
+
     # ------------------------------------------------------------------
     def _listen_loop(self):
         srv = _socket.socket(_socket.AF_INET, _socket.SOCK_STREAM)
         srv.setsockopt(_socket.SOL_SOCKET, _socket.SO_REUSEADDR, 1)
         srv.bind((self.HOST, self.PORT))
         srv.listen(1)
-        srv.settimeout(1.0)          # so we can check _stop_event each second
+        srv.settimeout(1.0)
 
         while not self._stop_event.is_set():
             try:
@@ -209,17 +215,28 @@ class SocketListener:
             except OSError:
                 break
 
-            print(f"[SocketListener] Qt client connected from {addr}")
+            print(f"[QtBridge] Qt connected from {addr}")
+            with self._conn_lock:
+                self._conn = conn
+
+            # Start sender thread for this connection
+            send_thread = threading.Thread(target=self._send_loop,
+                                           args=(conn,), daemon=True,
+                                           name="QtBridgeSender")
+            send_thread.start()
+
             try:
-                self._handle_client(conn)
+                self._recv_loop(conn)
             finally:
+                with self._conn_lock:
+                    self._conn = None
                 conn.close()
-                print(f"[SocketListener] Qt client disconnected")
+                print(f"[QtBridge] Qt disconnected")
 
         srv.close()
 
-    def _handle_client(self, conn: _socket.socket):
-        """Read newline-delimited JSON from one connected client."""
+    def _recv_loop(self, conn: _socket.socket):
+        """Read incoming packet JSON from Qt."""
         buf = ""
         conn.settimeout(1.0)
 
@@ -231,11 +248,10 @@ class SocketListener:
             except (ConnectionResetError, OSError):
                 break
 
-            if not chunk:          # client closed connection
+            if not chunk:
                 break
 
             buf += chunk
-            # Process every complete newline-terminated message
             while "\n" in buf:
                 line, buf = buf.split("\n", 1)
                 line = line.strip()
@@ -245,99 +261,20 @@ class SocketListener:
                     msg = _json.loads(line)
                     self.json_queue.put(msg)
                 except _json.JSONDecodeError as e:
-                    print(f"[SocketListener] JSON parse error: {e} | raw: {line!r}")
+                    print(f"[QtBridge] JSON parse error: {e} | raw: {line!r}")
 
-
-# =============================================================================
-# Alert pusher — listens on 127.0.0.1:9998 and pushes alert JSON to Qt
-#
-# IDS.py acts as the SERVER. Qt connects as the client when it's ready.
-# When a threat is detected, the alert JSON is put on alert_queue and the
-# pusher thread sends it to every connected Qt client.
-# =============================================================================
-
-class AlertPusher:
-    """
-    Listens on 127.0.0.1:9998. When Qt connects, any alert put on
-    alert_queue is immediately forwarded as newline-delimited JSON.
-    Multiple Qt clients are supported (e.g. reconnects).
-    """
-
-    HOST = "127.0.0.1"
-    PORT = 9998
-
-    def __init__(self):
-        self.alert_queue  = queue.Queue()
-        self._stop_event  = threading.Event()
-        self._clients     = []          # list of connected QTcpSocket connections
-        self._clients_lock = threading.Lock()
-        self._thread      = None
-
-    def start(self):
-        self._thread = threading.Thread(target=self._listen_loop, daemon=True,
-                                        name="AlertPusher")
-        self._thread.start()
-        # Drain queue → connected clients on a separate thread
-        threading.Thread(target=self._send_loop, daemon=True,
-                         name="AlertSender").start()
-        print(f"[AlertPusher] Listening on {self.HOST}:{self.PORT}")
-
-    def stop(self):
-        self._stop_event.set()
-        self.alert_queue.put(None)      # unblock _send_loop
-        try:
-            with _socket.create_connection((self.HOST, self.PORT), timeout=1):
-                pass
-        except Exception:
-            pass
-        if self._thread:
-            self._thread.join(timeout=3)
-
-    def push(self, alert: dict):
-        """Called by AlertSystem.generate_alert() to enqueue an alert."""
-        self.alert_queue.put(alert)
-
-    # ------------------------------------------------------------------
-    def _listen_loop(self):
-        srv = _socket.socket(_socket.AF_INET, _socket.SOCK_STREAM)
-        srv.setsockopt(_socket.SOL_SOCKET, _socket.SO_REUSEADDR, 1)
-        srv.bind((self.HOST, self.PORT))
-        srv.listen(5)
-        srv.settimeout(1.0)
-
+    def _send_loop(self, conn: _socket.socket):
+        """Send outgoing alert JSON to Qt."""
         while not self._stop_event.is_set():
-            try:
-                conn, addr = srv.accept()
-            except _socket.timeout:
-                continue
-            except OSError:
-                break
-
-            print(f"[AlertPusher] Qt alert client connected from {addr}")
-            conn.settimeout(None)
-            with self._clients_lock:
-                self._clients.append(conn)
-
-        srv.close()
-
-    def _send_loop(self):
-        """Drain alert_queue and write each alert to all connected clients."""
-        while True:
             alert = self.alert_queue.get()
-            if alert is None:           # shutdown sentinel
+            if alert is None:
                 break
-
-            line = (_json.dumps(alert) + "\n").encode("utf-8")
-            with self._clients_lock:
-                dead = []
-                for conn in self._clients:
-                    try:
-                        conn.sendall(line)
-                    except OSError:
-                        dead.append(conn)
-                for conn in dead:
-                    self._clients.remove(conn)
-                    print("[AlertPusher] Qt alert client disconnected")
+            try:
+                conn.sendall((_json.dumps(alert) + "\n").encode("utf-8"))
+            except OSError:
+                # Connection dropped — put alert back and exit
+                self.alert_queue.put(alert)
+                break
 
 
 from sklearn.ensemble import IsolationForest
@@ -467,16 +404,16 @@ class IntrusionDetectionSystem:
 
         es_url = os.getenv("ES_URL", "http://localhost:9200")
         self.es_queue     = queue.Queue()
-        self.alert_pusher = AlertPusher()
         self.alert_system = AlertSystem(es_url=es_url, es_queue=self.es_queue,
-                                        alert_pusher=self.alert_pusher)
+                                        alert_pusher=None)  # set after qt_bridge is created
 
         self.detection_engine.train_anomaly_detector([[50, 1, 100]])
         self.interface = interface
 
-        # Issue #53: queue that SocketListener puts JSON dicts onto
-        self.json_queue     = queue.Queue()
-        self.socket_listener = SocketListener(self.json_queue)
+        # Bidirectional bridge to Qt on port 9999
+        self.json_queue = queue.Queue()
+        self.qt_bridge  = QtBridge(self.json_queue)
+        self.alert_system.alert_pusher = self.qt_bridge  # alerts go back over same socket
 
     def auto_select_interface(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -568,11 +505,8 @@ class IntrusionDetectionSystem:
         es_thread = threading.Thread(target=self._es_worker, daemon=True)
         es_thread.start()
 
-        # Issue #53: start the TCP socket listener for Qt frontend
-        self.socket_listener.start()
-
-        # Start alert pusher so Qt can receive threat alerts on port 9998
-        self.alert_pusher.start()
+        # Issue #53: start the bidirectional Qt bridge on port 9999
+        self.qt_bridge.start()
 
         while True:
             try:
@@ -617,8 +551,7 @@ class IntrusionDetectionSystem:
             except KeyboardInterrupt:
                 print("Stopping IDS...")
                 self.packet_capture.stop()
-                self.socket_listener.stop()
-                self.alert_pusher.stop()
+                self.qt_bridge.stop()
                 self.es_queue.put((None, None))
                 es_thread.join(timeout=5)
                 break
