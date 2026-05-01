@@ -10,6 +10,7 @@
 #include <QHeaderView>
 #include <QMessageBox>
 #include <QScrollBar>
+#include <QIcon>
 
 /*
  * inter is the name of the device to listen on
@@ -19,8 +20,18 @@ MainWindow::MainWindow(QString inter, QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowTitle("Network Intrusion Detection System");
+    setWindowIcon(QIcon(":/icons/cougar.png"));
     ui->home->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->home->verticalHeader()->setVisible(false);
+    ui->alertTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    // Make top table twice as tall
+    QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(ui->centralwidget->layout());
+    if(layout){
+        layout->setStretchFactor(ui->home, 2);
+        layout->setStretchFactor(ui->alertTable,1);
+    }
     startInterpreter(inter);
 
 }
@@ -60,6 +71,8 @@ void MainWindow::startInterpreter(QString inter){
                                                                 Qt::QueuedConnection);
     connect(senderThread, &QThread::finished, sender, &QObject::deleteLater);
 
+    connect(sender, &SenderWorker::alertReceived, this, &MainWindow::addAlertRow,
+                                                                Qt::QueuedConnection);
     captureThread->start();
     senderThread->start();
 }
@@ -95,6 +108,35 @@ void MainWindow::addPacketRow(QString timeStamp,
         ui->home->scrollToBottom();
     }
 }
+
+void MainWindow::addAlertRow(QString timestamp,
+                             QString threatType,
+                             QString sourceIP,
+                             QString destinationIP,
+                             double confidence,
+                             QString rule){
+    QScrollBar* bar = ui->home->verticalScrollBar();
+    bool wasAtBottom = (bar->value() == bar->maximum());
+
+    int row = ui->alertTable->rowCount();
+    ui->alertTable->insertRow(row);
+    ui->alertTable->setItem(row, 0, new QTableWidgetItem(timestamp));
+    ui->alertTable->setItem(row, 1, new QTableWidgetItem(threatType));
+    ui->alertTable->setItem(row, 2, new QTableWidgetItem(rule));
+    ui->alertTable->setItem(row, 3, new QTableWidgetItem(sourceIP));
+    ui->alertTable->setItem(row, 4, new QTableWidgetItem(destinationIP));
+    ui->alertTable->setItem(row, 5, new QTableWidgetItem(QString::number(confidence, 'f', 2)));
+
+    if(confidence > 0.8){
+        for(int col = 0; col < 6; col++){
+            ui->alertTable->item(row,col)->setBackground(QBrush(QColor(255, 200, 200)));
+        }
+    }
+    if(wasAtBottom){
+        ui->home->scrollToBottom();
+    }
+}
+
 void MainWindow::onCaptureError(QString message){
     QMessageBox::critical(this, "Capture Error", message);
 }

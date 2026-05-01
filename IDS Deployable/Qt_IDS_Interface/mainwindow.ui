@@ -15,6 +15,19 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
+     <widget class="QLabel" name="label">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+        <underline>true</underline>
+       </font>
+      </property>
+      <property name="text">
+       <string>Captured Packets</string>
+      </property>
+     </widget>
+    </item>
     <item>
      <widget class="QTableWidget" name="home">
       <property name="rowCount">
@@ -59,6 +72,65 @@
       <column>
        <property name="text">
         <string>Info</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+    <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
+     <widget class="QLabel" name="label_2">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+        <underline>true</underline>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(170, 1, 1)</string>
+      </property>
+      <property name="text">
+       <string>Detected Alerts</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTableWidget" name="alertTable">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="gridStyle">
+       <enum>Qt::PenStyle::SolidLine</enum>
+      </property>
+      <property name="columnCount">
+       <number>6</number>
+      </property>
+      <column>
+       <property name="text">
+        <string>Timestamp</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Threat Type</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Rule</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Source</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Destination</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Confidence</string>
        </property>
       </column>
      </widget>
