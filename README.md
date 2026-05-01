@@ -32,8 +32,9 @@ Clone the github
 ## Functionality
 
 cd into the folder with the ids code and test function. 
-Run the IDS test bat whcih will show in terminal and open an elstic windown with alerts in the alert section
+Run the IDS test bat which will show in terminal and open an elastic window with alerts in the alert section (this is getting phased out for a qt application)
 Connect to a hotspot so that you can run the ids on your own network, then you can run the ids real bat file which will run the ids on your network and show the packets as well as alerts if there is any
+Make sure to also run the qt application
 
 Npcap sniffs packets and relays results to a Qfyt ui
 
@@ -43,6 +44,8 @@ Requires administrative privileges
 High traffic volumes may impact performance
 Detection is currently rule-based (limited ML integration)
 Windows-dependent due to Npcap
+Issues with connection to kibana, most issues currently get solved by either reloaidng the page or restarting the bat after closing everything
+Issues with conncting with elastic/docker, if these pop up (mostly after running and closing) delete the docker container and then run the bat, should fix issue
 
 ## Additional Documentation
 TODO: Provide links to additional documentation that may exist in the repo, e.g.,
