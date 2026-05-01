@@ -482,7 +482,6 @@ class IntrusionDetectionSystem:
         es_thread = threading.Thread(target=self._es_worker, daemon=True)
         es_thread.start()
 
-        # Issue #53: start the bidirectional Qt bridge on port 9999
         self.qt_bridge.start()
 
         while True:
@@ -518,7 +517,6 @@ class IntrusionDetectionSystem:
                 except queue.Empty:
                     pass
 
-                # --- Issue #53/#54: JSON dicts from Qt socket ---
                 try:
                     msg = self.json_queue.get(timeout=0.1)
                     self._process_json_msg(msg)
