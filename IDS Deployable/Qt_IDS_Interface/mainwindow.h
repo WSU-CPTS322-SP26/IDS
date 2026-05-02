@@ -40,6 +40,11 @@ class MainWindow : public QMainWindow
                          QString destinationIP,
                          double confidence,
                          QString rule);
+        void onSynFloodClicked();
+        void onPortScanClicked();
+
+    signals:
+        void fakePacket(QByteArray jsonBytes);
 
     private:
         Ui::MainWindow *ui;
