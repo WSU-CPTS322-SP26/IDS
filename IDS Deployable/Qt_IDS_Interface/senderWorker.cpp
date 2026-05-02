@@ -1,3 +1,6 @@
+/*
+ * Worker thread to send JSON messages over socket.
+ */
 #include "senderWorker.h"
 
 SenderWorker::SenderWorker(QObject *parent)

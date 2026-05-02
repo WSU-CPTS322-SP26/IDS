@@ -528,7 +528,7 @@ class IntrusionDetectionSystem:
 
             except KeyboardInterrupt:
                 print("Stopping IDS...")
-                #self.packet_capture.stop()
+                #self.packet_capture.stop() Uncomment if testing Scapy
                 self.qt_bridge.stop()
                 self.es_queue.put((None, None))
                 es_thread.join(timeout=5)

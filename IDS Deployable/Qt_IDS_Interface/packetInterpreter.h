@@ -1,6 +1,3 @@
-/*
- * AI was used to help with syntax and threading.
- */
 #ifndef PACKETINTERPRETER_H
 #define PACKETINTERPRETER_H
 #include "pcap.h"

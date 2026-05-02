@@ -1,5 +1,5 @@
 /*
- * AI was used to help with syntax and threading.
+ * Worker thread to capture packets.
  */
 
 #include "captureWorker.h"
