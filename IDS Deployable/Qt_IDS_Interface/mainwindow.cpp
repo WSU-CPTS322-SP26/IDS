@@ -3,6 +3,7 @@
  */
 
 #include "mainwindow.h"
+#include "qboxlayout.h"
 #include "ui_mainwindow.h"
 #include "captureWorker.h"
 #include "senderWorker.h"
@@ -11,6 +12,7 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QIcon>
+#include <QDateTime>
 
 /*
  * inter is the name of the device to listen on
@@ -32,8 +34,28 @@ MainWindow::MainWindow(QString inter, QWidget *parent)
         layout->setStretchFactor(ui->home, 2);
         layout->setStretchFactor(ui->alertTable,1);
     }
-    startInterpreter(inter);
 
+    connect(ui->SYN_Button, &QPushButton::clicked, this, [=](){
+        ui->SYN_Button->setStyleSheet("background-color: yellow;");
+    });
+    connect(ui->PORT_Button, &QPushButton::clicked, this, [=](){
+        ui->PORT_Button->setStyleSheet("background-color: yellow;");
+    });
+
+    ui->alertTable->setStyleSheet(
+        "QTableWidget {"
+        "   background-color: #fff8dc;"
+        "   gridline-color: #d6c98c;"
+        "}"
+        "QTableWidget::item {"
+        "   background-color: #fff8dc;"
+        "}"
+        "QHeaderView::section {"
+        "   background-color: #f0e2a0;"
+        "   font-weight: bold;"
+        "}"
+    );
+    startInterpreter(inter);
 }
 
 MainWindow::~MainWindow()
@@ -73,6 +95,10 @@ void MainWindow::startInterpreter(QString inter){
 
     connect(sender, &SenderWorker::alertReceived, this, &MainWindow::addAlertRow,
                                                                 Qt::QueuedConnection);
+    connect(this, &MainWindow::fakePacket, sender, &SenderWorker::sendJson, Qt::QueuedConnection);
+    connect(ui->SYN_Button, &QPushButton::clicked, this, &MainWindow::onSynFloodClicked);
+    connect(ui->PORT_Button, &QPushButton::clicked, this, &MainWindow::onPortScanClicked);
+
     captureThread->start();
     senderThread->start();
 }
@@ -107,6 +133,51 @@ void MainWindow::addPacketRow(QString timeStamp,
     if(wasAtBottom){
         ui->home->scrollToBottom();
     }
+}
+
+void MainWindow::onSynFloodClicked(){
+    QDateTime base = QDateTime::currentDateTimeUtc();
+    QByteArray batched;
+    for(int i = 0; i < 100; i++){
+        QJsonObject obj;
+        obj["timestamp"] = base.addMSecs(i).toString(Qt::ISODateWithMs) + "Z";
+        obj["source_ip"] = "10.0.0.66";
+        obj["destination_ip"] = "10.0.0.99";
+        obj["protocol"] = "TCP";
+        obj["length"] = 60;
+        obj["source_port"] = 12345;
+        obj["destination_port"] = 80;
+        obj["tcp_flags"] = 2;
+
+        QByteArray jsonBytes = QJsonDocument(obj).toJson(QJsonDocument::Compact);
+        jsonBytes.append('\n');
+        batched.append(jsonBytes);
+    }
+    emit fakePacket(batched);
+    qDebug() << "Sent 100 SYN flood packets";
+}
+
+void MainWindow::onPortScanClicked(){
+    QDateTime base = QDateTime::currentDateTimeUtc();
+
+    for(int port = 0; port <10; port++){
+        for(int j = 0; j < 10; j++){
+            QJsonObject obj;
+            obj["timestamp"] = base.toString(Qt::ISODateWithMs) + "Z";
+            obj["source_ip"] = "10.0.0.77";
+            obj["destination_ip"] = "10.0.0.99";
+            obj["protocol"] = "TCP";
+            obj["length"] = 60;
+            obj["source_port"] = 54321;
+            obj["destination_port"] = 20 + port;
+            obj["tcp_flags"] = 16;
+
+            QByteArray jsonBytes = QJsonDocument(obj).toJson(QJsonDocument::Compact);
+            jsonBytes.append('\n');
+            emit fakePacket(jsonBytes);
+        }
+    }
+    qDebug() << "Sent 100 Port scan packets across 10 ports";
 }
 
 void MainWindow::addAlertRow(QString timestamp,

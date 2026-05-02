@@ -16,11 +16,12 @@ class PacketCapture:
             packet = packet.payload
 
         if packet and packet.haslayer(IP) and packet.haslayer(TCP):
-            print("PACKET:", packet.summary())
+            # print("PACKET:", packet.summary())
             self.packet_queue.put(packet)
         else:
+            None
             # Debug print so we know what we're seeing
-            print("NON-IP PACKET:", original.summary())
+            # print("NON-IP PACKET:", original.summary())
 
     def start_capture(self, interface):
         def capture_thread():
@@ -125,7 +126,7 @@ class TrafficAnalyzer:
         if duration == 0:
             duration = 1e-6
 
-        return {
+        features =  {
             'packet_size':   pkt_size,
             'flow_duration': duration,
             'packet_rate':   stats['packet_count'] / duration,
@@ -135,6 +136,8 @@ class TrafficAnalyzer:
             'packet_count':  stats['packet_count'],
             'source_ip':     ip_src,
         }
+
+        return features
 
 import socket as _socket
 import json as _json
@@ -275,16 +278,16 @@ class DetectionEngine:
             'syn_flood': {
                 'condition': lambda features: (
                     features['tcp_flags'] == 2 and
-                    features['packet_rate'] > 50 and
+                    features['packet_rate'] > 30 and
                     features['flow_duration'] > 0.005 and
                     features['packet_count'] > 3
                 )
             },
             'port_scan': {
                 'condition': lambda features: (
-                    len(self.traffic_analyzer.port_hits[features['source_ip']]) >= 5 and
-                    features['packet_rate'] > 100 and
-                    features['flow_duration'] > 0.01
+                    len(self.traffic_analyzer.port_hits[features['source_ip']]) >= 8 and
+                    features['packet_rate'] > 50 and
+                    features['flow_duration'] > 0.005
                 )
             }
         }
@@ -476,7 +479,7 @@ class IntrusionDetectionSystem:
 
     def start(self):
         print(f"Starting IDS on interface {self.interface}")
-        self.packet_capture.start_capture(self.interface)
+       # self.packet_capture.start_capture(self.interface) # comment out the activation
 
         # Start the ES worker thread
         es_thread = threading.Thread(target=self._es_worker, daemon=True)
@@ -487,35 +490,35 @@ class IntrusionDetectionSystem:
         while True:
             try:
                 # --- Live Scapy packets ---
-                try:
-                    packet = self.packet_capture.packet_queue.get(timeout=0.1)
-                    features = self.traffic_analyzer.analyze_packet(packet)
+                # try:
+                #     packet = self.packet_capture.packet_queue.get(timeout=0.1)
+                #     features = self.traffic_analyzer.analyze_packet(packet)
 
-                    if features:
-                        packet_doc = {
-                            'timestamp':        datetime.now(timezone.utc).isoformat(),
-                            'source_ip':        packet[IP].src,
-                            'destination_ip':   packet[IP].dst,
-                            'source_port':      packet[TCP].sport,
-                            'destination_port': packet[TCP].dport,
-                            'packet_size':      len(packet),
-                            'tcp_flags':        int(packet[TCP].flags),
-                            'type':             'packet'
-                        }
-                        #self.es_queue.put(("ids-packets", packet_doc))
+                #     if features:
+                #         packet_doc = {
+                #             'timestamp':        datetime.now(timezone.utc).isoformat(),
+                #             'source_ip':        packet[IP].src,
+                #             'destination_ip':   packet[IP].dst,
+                #             'source_port':      packet[TCP].sport,
+                #             'destination_port': packet[TCP].dport,
+                #             'packet_size':      len(packet),
+                #             'tcp_flags':        int(packet[TCP].flags),
+                #             'type':             'packet'
+                #         }
+                #         self.es_queue.put(("ids-packets", packet_doc))
 
-                        threats = self.detection_engine.detect_threats(features)
-                        for threat in threats:
-                            packet_info = {
-                                'source_ip':        packet[IP].src,
-                                'destination_ip':   packet[IP].dst,
-                                'source_port':      packet[TCP].sport,
-                                'destination_port': packet[TCP].dport
-                            }
-                            #self.alert_system.generate_alert(threat, packet_info)
+                #         threats = self.detection_engine.detect_threats(features)
+                #         for threat in threats:
+                #             packet_info = {
+                #                 'source_ip':        packet[IP].src,
+                #                 'destination_ip':   packet[IP].dst,
+                #                 'source_port':      packet[TCP].sport,
+                #                 'destination_port': packet[TCP].dport
+                #             }
+                #             self.alert_system.generate_alert(threat, packet_info)
 
-                except queue.Empty:
-                    pass
+                # except queue.Empty:
+                #     pass
 
                 try:
                     msg = self.json_queue.get(timeout=0.1)
@@ -525,7 +528,7 @@ class IntrusionDetectionSystem:
 
             except KeyboardInterrupt:
                 print("Stopping IDS...")
-                self.packet_capture.stop()
+                #self.packet_capture.stop()
                 self.qt_bridge.stop()
                 self.es_queue.put((None, None))
                 es_thread.join(timeout=5)

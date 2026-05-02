@@ -15,7 +15,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
-    <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
+    <item alignment="Qt::AlignmentFlag::AlignHCenter">
      <widget class="QLabel" name="label">
       <property name="font">
        <font>
@@ -76,7 +76,7 @@
       </column>
      </widget>
     </item>
-    <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
+    <item alignment="Qt::AlignmentFlag::AlignHCenter">
      <widget class="QLabel" name="label_2">
       <property name="font">
        <font>
@@ -133,6 +133,20 @@
         <string>Confidence</string>
        </property>
       </column>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="PORT_Button">
+      <property name="text">
+       <string>Trigger Port Scan Attack</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="SYN_Button">
+      <property name="text">
+       <string>Trigger SYN Flood     </string>
+      </property>
      </widget>
     </item>
    </layout>
