@@ -24,6 +24,9 @@ Here are links to the issues that we completed in this sprint:
  * [URL of issue 7](https://github.com/WSU-CPTS322-SP26/IDS/issues/57)
  * [URL of issue 8](https://github.com/WSU-CPTS322-SP26/IDS/issues/58)
  * [URL of issue 9](https://github.com/WSU-CPTS322-SP26/IDS/issues/59)
+ * [URL of issue 10](https://github.com/WSU-CPTS322-SP26/IDS/issues/73)
+ * [URL of issue 11](https://github.com/WSU-CPTS322-SP26/IDS/issues/65)
+ * [URL of issue 12](https://github.com/WSU-CPTS322-SP26/IDS/issues/64)
  
  ## Incomplete Issues/User Stories
  Here are links to issues we worked on but did not complete in this sprint:
@@ -46,8 +49,8 @@ Here's what went well:
   * Item x
  
 Here's what we'd like to improve:
-   * We could have worked harder to come up with more features instead of just refining current ones
-   * Item 2
+   * We could have worked harder to come up with more features instead of just refining current ones.
+   * We left a few things till last minute which made us rush at the end.
    * Item x
   
 Here are changes we plan to implement in the next sprint:
