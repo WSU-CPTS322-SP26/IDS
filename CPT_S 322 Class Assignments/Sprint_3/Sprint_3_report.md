@@ -28,10 +28,7 @@ Here are links to the issues that we completed in this sprint:
  ## Incomplete Issues/User Stories
  Here are links to issues we worked on but did not complete in this sprint:
  
- * URL of issue 1 <<One sentence explanation of why issue was not completed>>
- * URL of issue 2 <<One sentence explanation of why issue was not completed>>
- * URL of issue n <<One sentence explanation of why issue was not completed>>
-
+ * N/A
 
 ## Code Files for Review
 Please review the following code files, which were actively developed during this sprint, for quality:
@@ -44,12 +41,12 @@ Please review the following code files, which were actively developed during thi
  
 ## Retrospective Summary
 Here's what went well:
-  * We worked very well to complete our sprint 3 goals
-  * Item 2
+  * We worked very well to complete our sprint 3 goals in an efficient and timely manner.
+  * The Leison was very good at splitting and assigning work to other members of the team.
   * Item x
  
 Here's what we'd like to improve:
-   * Item 1
+   * We could have worked harder to come up with more features instead of just refining current ones
    * Item 2
    * Item x
   
