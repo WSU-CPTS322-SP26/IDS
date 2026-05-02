@@ -4,8 +4,6 @@
  * requiring a direct call from the programmer each time he wants to retrieve a packet.
  * Tutorial Link: https://npcap.com/guide/npcap-tutorial.html
  *
- * AI was used to help with syntax, filtering, and threading.
- *
  */
 
 #include "packetInterpreter.h"

@@ -1,7 +1,3 @@
-/*
- * AI was used to help with syntax and threading.
- */
-
 #ifndef CAPTUREWORKER_H
 #define CAPTUREWORKER_H
 

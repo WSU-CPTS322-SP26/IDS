@@ -1,7 +1,3 @@
-/*
- * AI was used to help with syntax and threading.
- */
-
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 

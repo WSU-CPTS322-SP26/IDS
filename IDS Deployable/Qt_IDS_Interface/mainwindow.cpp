@@ -1,7 +1,3 @@
-/*
- * AI was used to help with syntax and threading.
- */
-
 #include "mainwindow.h"
 #include "qboxlayout.h"
 #include "ui_mainwindow.h"
@@ -95,9 +91,9 @@ void MainWindow::startInterpreter(QString inter){
 
     connect(sender, &SenderWorker::alertReceived, this, &MainWindow::addAlertRow,
                                                                 Qt::QueuedConnection);
-    connect(this, &MainWindow::fakePacket, sender, &SenderWorker::sendJson, Qt::QueuedConnection);
     connect(ui->SYN_Button, &QPushButton::clicked, this, &MainWindow::onSynFloodClicked);
     connect(ui->PORT_Button, &QPushButton::clicked, this, &MainWindow::onPortScanClicked);
+    connect(this, &MainWindow::fakePacket, sender, &SenderWorker::sendJson, Qt::QueuedConnection);
 
     captureThread->start();
     senderThread->start();

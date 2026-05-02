@@ -1,5 +1,5 @@
 /*
- * AI was used to help with syntax and threading.
+ * AI was leveraged for this project.
  */
 
 #include "mainwindow.h"
