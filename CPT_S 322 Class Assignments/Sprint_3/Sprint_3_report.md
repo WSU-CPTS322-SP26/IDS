@@ -1,5 +1,5 @@
 # Sprint 3 Report (4/4/26 - 5/2/2026)
-
+# Demo video link: https://youtu.be/HbldksYBFzo](https://www.youtube.com/watch?v=0e_LJgPDHRQ
 ## What's New (User Facing)
  * Elasticsearch post queue and worker thread 
  * TCP socket listener for incoming JSON packet messages in both Qt and Python
