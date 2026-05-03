@@ -2,14 +2,14 @@
 
 ## What's New (User Facing)
  * Elasticsearch post queue and worker thread 
- * TCP socket listener for incoming JSON packet messages
- * Feature n or Bug Fix n
+ * TCP socket listener for incoming JSON packet messages in both Qt and Python
+ * Updated Qt interface
 
 ## Work Summary (Developer Facing)
-Provide a one paragraph synposis of what your team accomplished this sprint. Don't repeat the "What's New" list of features. Instead, help the instructor understand how you went about the work described there, any barriers you overcame, and any significant learnings for your team.
+This was an important final Sprint because it is where everything came together. To make this happen, we had to open up sockets for Python and Qt to communicate, so that packet data and alerts were being analyzed in real time. We also had to think about the extra load on the Python IDS and the possibility for backup which is why we delgated the POST request functionality to its own thread. All in all, we were able to get everything connected how we wanted to so that Elastic and Qt could receive alerts at the same time, and do it on real traffic.
 
 ## Unfinished Work
-If applicable, explain the work you did not finish in this sprint. For issues/user stories in the current sprint that have not been closed, (a) any progress toward completion of the issues has been clearly tracked (by checking the checkboxes of  acceptance criteria), (b) a comment has been added to the issue to explain why the issue could not be completed (e.g., "we ran out of time" or "we did not anticipate it would be so much work"), and (c) the issue is added to a subsequent sprint, so that it can be addressed later.
+Non applicable because all of our work was completed on time.
 
 ## Completed Issues/User Stories
 Here are links to the issues that we completed in this sprint:
@@ -29,29 +29,23 @@ Here are links to the issues that we completed in this sprint:
  * [URL of issue 12](https://github.com/WSU-CPTS322-SP26/IDS/issues/64)
  
  ## Incomplete Issues/User Stories
- Here are links to issues we worked on but did not complete in this sprint:
- 
- * N/A
+ Non applicable because all of our issues were completed on time.
 
 ## Code Files for Review
 Please review the following code files, which were actively developed during this sprint, for quality:
- * [Name of code file 1](https://github.com/IDS/IDSDeployable/IDS.py)
- * [Name of code file 2](https://github.com/your_repo/file_extension)
- * [Name of code file 3](https://github.com/your_repo/file_extension)
- * [Name of code file 4](https://github.com/your_repo/file_extension)
- * [Name of code file 5](https://github.com/your_repo/file_extension)
- * [Name of code file 6](https://github.com/your_repo/file_extension)
+ * [Python IDS](https://github.com/WSU-CPTS322-SP26/IDS/blob/main/IDS%20Deployable/IDS_test.py)
+ * [Qt Interface](https://github.com/WSU-CPTS322-SP26/IDS/tree/main/IDS%20Deployable/Qt_IDS_Interface)
  
 ## Retrospective Summary
 Here's what went well:
   * We worked very well to complete our sprint 3 goals in an efficient and timely manner.
   * The Leison was very good at splitting and assigning work to other members of the team.
-  * Item x
+  * The weekly meetings with AJ helped keep us on track.
  
 Here's what we'd like to improve:
    * We could have worked harder to come up with more features instead of just refining current ones.
    * We left a few things till last minute which made us rush at the end.
-   * Item x
+   * We wish we would have made more time for further testing.
   
 Here are changes we plan to implement in the next sprint:
-   * N/A last sprint
+   * Non applicable since this is the final sprint.
