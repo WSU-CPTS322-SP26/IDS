@@ -6,9 +6,9 @@
 
 This NIDS captures packets, analyzes them, sends data to a dashboard, and alerts the user of any malicious traffic.
 
-#### Aditional information
+#### Additional information
 
-Similar to other independent IDS systems, the IDS will consist of four main modules: packet capture, traffic analysis, threat detection, and alert generation. Throughout development, the team will ensure their code stays organized and maintainable for future development. The application’s front-end will be implemented using React with system data stored in a SQL-based PostgreSQL database. Python will be extensively used for back-end processes. Key python libraries include Scapy for packet sniffing, pandas for network analysis, and re for hardcoded threat detection. Ideally, the project will also utilize scikit-learn for machine-learning-based anomaly detection. A stretch goal is to implement a SSH Honeypot to attract malicious traffic.
+Similar to other independent IDS systems, this IDS consists of four main modules: packet capture, traffic analysis, threat detection, and alert generation. Throughout development, the team has ensured code stays organized and maintainable for future development. The application’s front-end uses Qt to display incoming packets from Npcap, similar to Wireshark. Python is extensively used for back-end processes like packet analysis, packet detection, and sending alerts. Alerts are both sent to the Qt GUI and an Elasticsearch dashboard that displays other metrics like CPU usage. Before the front-end and back-end were connected, the Python IDS was using the libary, Scapy, to capture packets. The Scapy-related tutorial code has been left in (but commented out) incase anyone is interested in observing it. A stretch goal is to implement a SSH Honeypot to attract malicious traffic and add windows to the Qt GUI that can be expanded to display detailed packet information, similar to Wireshark.
 
 
 ## Installation
@@ -19,61 +19,35 @@ Npcap sdk
 
 ## Prerequisites
 
-Docker
+* Docker
 
 ### Add-ons
 
 N/A
 
 ### Installation Steps
-
-Clone the github
+* Clone the github
 
 ## Functionality
 
-cd into the folder with the ids code and test function. 
-Run the IDS test bat which will show in terminal and open an elastic window with alerts in the alert section (this is getting phased out for a qt application)
-Connect to a hotspot so that you can run the ids on your own network, then you can run the ids real bat file which will run the ids on your network and show the packets as well as alerts if there is any
-Make sure to also run the qt application
-
-Npcap sniffs packets and relays results to a Qfyt ui
+- Start Docker
+- cd into the folder 'IDS Deployable' 
+- Start run_ids.bat which will show in terminal and open an Elastic metrics dashboard
+- Then from 'IDS Deployable', cd into Qt_IDS_Interface and run the Qt Project file
 
 ## Known Problems
 
-Requires administrative privileges
-High traffic volumes may impact performance
-Detection is currently rule-based (limited ML integration)
-Windows-dependent due to Npcap
-Issues with connection to kibana, most issues currently get solved by either reloaidng the page or restarting the bat after closing everything
-Issues with conncting with elastic/docker, if these pop up (mostly after running and closing) delete the docker container and then run the bat, should fix issue
+- Requires administrative privileges
+- High traffic volumes may impact performance
+- Detection is currently rule-based (limited ML integration)
+- Windows-dependent due to Npcap
+- Issues with connection to kibana -- most issues currently get solved by either reloading the page or restarting the bat after closing everything
+- Issues with conncting with elastic/docker -- if these pop up (mostly after running and closing) delete the docker container and then run the bat
 
 ## Additional Documentation
-TODO: Provide links to additional documentation that may exist in the repo, e.g.,
-* [Sprint reports](https://github.com/WSU-CPTS322-SP26/IDS/blob/2af636bd5e15bb4326fc570639b3dcf47da079a1/SPRINT_REPORT_1)
-* [resources] (https://github.com/WSU-CPTS322-SP26/IDS/blob/2af636bd5e15bb4326fc570639b3dcf47da079a1/Resources.md)
-
-## License
-
-Boost Software License - Version 1.0 - August 17th, 2003
-
-Permission is hereby granted, free of charge, to any person or organization
-obtaining a copy of the software and accompanying documentation covered by
-this license (the "Software") to use, reproduce, display, distribute,
-execute, and transmit the Software, and to prepare derivative works of the
-Software, and to permit third-parties to whom the Software is furnished to
-do so, all subject to the following:
-
-The copyright notices in the Software and this entire statement, including
-the above license grant, this restriction and the following disclaimer,
-must be included in all copies of the Software, in whole or in part, and
-all derivative works of the Software, unless such copies or derivative
-works are solely in the form of machine-executable object code generated by
-a source language processor.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
-SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
-FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
-ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
+* [Sprint Report 1](https://github.com/WSU-CPTS322-SP26/IDS/blob/2af636bd5e15bb4326fc570639b3dcf47da079a1/SPRINT_REPORT_1)
+* [Sprint Report 2](https://github.com/WSU-CPTS322-SP26/IDS/blob/main/CPT_S%20322%20Class%20Assignments/Sprint_2/Sprint%202%20Report.md)
+* [Sprint Report 3](https://github.com/WSU-CPTS322-SP26/IDS/blob/main/CPT_S%20322%20Class%20Assignments/Sprint_3/Sprint_3_report.md)
+* [Final Report] (fill in)
+* [sources] (https://github.com/WSU-CPTS322-SP26/IDS/blob/2af636bd5e15bb4326fc570639b3dcf47da079a1/Sources.md)
+* [Licence] (https://github.com/WSU-CPTS322-SP26/IDS/blob/main/LICENSE.txt)
