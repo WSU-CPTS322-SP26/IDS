@@ -4,7 +4,7 @@
 
 This NIDS captures packets, analyzes them, sends data to a dashboard, and alerts the user of any malicious traffic.
 
-#### Additional information
+### Additional information
 
 Similar to other independent IDS systems, this IDS consists of four main modules: packet capture, traffic analysis, threat detection, and alert generation. Throughout development, the team has ensured code stays organized and maintainable for future development. The application’s front-end uses Qt to display incoming packets from Npcap, similar to Wireshark. Python is extensively used for back-end processes like packet analysis, packet detection, and sending alerts. Alerts are both sent to the Qt GUI and an Elasticsearch dashboard that displays other metrics like CPU usage. Before the front-end and back-end were connected, the Python IDS was using the libary, Scapy, to capture packets. The Scapy-related tutorial code has been left in (but commented out) incase anyone is interested in observing it. A stretch goal is to implement a SSH Honeypot to attract malicious traffic and add windows to the Qt GUI that can be expanded to display detailed packet information, similar to Wireshark.
 
